@@ -66,7 +66,7 @@ void netProcess(int netToCoreSocket) {
     if (len != sizeof(packet_t))
       continue;
     localTime = currentTime();
-    if (abs(packet->timestamp - localTime) > deltaT)
+    if (abs(packet->timestamp - localTime) > (int)deltaT)
       continue;
 
     /* replay test */

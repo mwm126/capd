@@ -55,7 +55,7 @@ u32 deltaT = 30;       /* Maximum allowed clock skew from client to server */
 u32 initTimeout = 5;   /* Maximum time allowed to open local ssh connection */
 u32 spoofTimeout = 30; /* Maximum time allowed to open spoofed ssh connection */
 char user[32] = "capd";
-int uid, gid;
+unsigned int uid, gid;
 int port = 62201;
 int verbosity = 1;
 

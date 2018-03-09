@@ -1,6 +1,9 @@
 #ifndef UTILITYFUNCTIONS_H
 #define UTILITYFUNCTIONS_H
 
+#include "time.h"
+#include "globalDefinitions.h"
+
 /*********************************************/
 /*             Utility Functions             */
 /*********************************************/

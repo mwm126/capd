@@ -169,7 +169,7 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket) {
       u8 OTPBuffer[sizeof(OTP_t)], tmp[100], digest[32];
       int counter;
       OTP_t *OTP = (OTP_t *)OTPBuffer;
-      decryptAES128ECB(plain->OTP, sizeof(OTP_t), AES128Key, OTPBuffer);
+      decryptAES128ECB(plain->OTP, AES128Key, OTPBuffer);
 
       /* Verify decrypted CRC */
       if (0xf0b8 != crc16(OTPBuffer, 16)) {
