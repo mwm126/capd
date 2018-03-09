@@ -1,3 +1,6 @@
+#ifndef UTILITYFUNCTIONS_H
+#define UTILITYFUNCTIONS_H
+
 /*********************************************/
 /*             Utility Functions             */
 /*********************************************/
@@ -38,43 +41,43 @@ void arrayToHexString ( u8 *binary, char *str, int binLen)
 int i;
 memset(str,0,binLen*2+1);
 for (i=0;i<binLen;i++)
-	sprintf(str+2*i,"%02x",binary[i]);
+  sprintf(str+2*i,"%02x",binary[i]);
 return;
 }
 
 /**********************************************************/
 /*           Search CAPD Password File Function           */
 /**********************************************************/
-int lookUpSerial (	FILE *f, int serial, char *username, char *destSystem, 
-					int *destPort, u8 *AES128Key, u8 *HMACKey)
+int lookUpSerial (	FILE *f, int serial, char *username, char *destSystem,
+          int *destPort, u8 *AES128Key, u8 *HMACKey)
 {
 int i,s;
 char txtPort[8+1],txtS[20+1],txtAES[40+1],txtHMAC[50+1];
 lseek(fileno(f),0,0);
 while(fscanf(f,"%32s %32s %8s %20s %40s %50s\n",
-		username,destSystem,txtPort,txtS,txtAES,txtHMAC) != EOF)
-	{
-	if (username[0] != 35)
-		{
-		s = atoi(txtS);
-		if (serial == s)
-			{
-			int data;
-			*destPort = atoi(txtPort);
-			for (i=0;i<16;i++)
-				{
-				sscanf((const char *)(txtAES+2*i),"%2x",&data);
-				AES128Key[i]=(u8)data;
-				}
-			for (i=0;i<20;i++)
-				{
-				sscanf((const char *)(txtHMAC+2*i),"%2x",&data);
-				HMACKey[i]=(u8)data;
-				}
-			return 1;
-			}
-		}
-	}
+    username,destSystem,txtPort,txtS,txtAES,txtHMAC) != EOF)
+  {
+  if (username[0] != 35)
+    {
+    s = atoi(txtS);
+    if (serial == s)
+      {
+      int data;
+      *destPort = atoi(txtPort);
+      for (i=0;i<16;i++)
+        {
+        sscanf((const char *)(txtAES+2*i),"%2x",&data);
+        AES128Key[i]=(u8)data;
+        }
+      for (i=0;i<20;i++)
+        {
+        sscanf((const char *)(txtHMAC+2*i),"%2x",&data);
+        HMACKey[i]=(u8)data;
+        }
+      return 1;
+      }
+    }
+  }
 return 0;
 }
 
@@ -133,3 +136,5 @@ out8[6] = in8[1];
 out8[7] = in8[0];
 return out64;
 }
+
+#endif
