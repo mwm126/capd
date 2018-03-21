@@ -95,12 +95,26 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket) {
     }
 
     /* Decrypt encBlock */
+    printf("\ndecryptAES256CBC inputs:\n");
+    printf("packet->encBlock:  ");
+    phex(packet->encBlock, sizeof(packet->encBlock));
+    printf("plain_t:  %d\n", sizeof(plain_t));
+    printf("AES256Key:  ");
+    phex(AES256Key, sizeof(AES256Key));
+    printf("packet->IV:  ");
+    phex(packet->IV, sizeof(packet->IV));
     decryptAES256CBC(packet->encBlock, sizeof(plain_t), AES256Key, packet->IV,
                      plainBuffer);
 
     /* Verify plaintext chksum */
     {
       u8 digest[32];
+      printf("\nSHA256Hash inputs:\n");
+      printf("plainBuffer:  ");
+      phex(plainBuffer, sizeof(plainBuffer));
+      printf("chksumBlockSize:  %d\n", chksumBlockSize);
+      printf("digest:  ");
+      phex(digest, sizeof(digest));
       SHA256Hash(plainBuffer, chksumBlockSize, digest);
       if (memcmp((void *)digest, (void *)plain->chksum, chksumSize) != 0) {
         logOutput(lf, 1, "Decrypted block failed chksum.  Serial: %d", serial);

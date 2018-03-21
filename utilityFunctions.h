@@ -55,7 +55,7 @@ int lookUpSerial(FILE *f, int serial, char *username, char *destSystem,
   lseek(fileno(f), 0, 0);
   while (fscanf(f, "%32s %32s %8s %20s %40s %50s\n", username, destSystem,
                 txtPort, txtS, txtAES, txtHMAC) != EOF) {
-    if (username[0] != 35) {
+    if (username[0] != '#') {
       s = atoi(txtS);
       if (serial == s) {
         int data;

@@ -95,4 +95,15 @@ typedef struct {
   u16 crc;
 } OTP_t;
 
+// print hex
+void phex(u8 *buf, uint len) {
+  int i;
+  for (i = 0; i < len; i++)
+    {
+      if (i > 0) printf(" ");
+      printf("%02X", buf[i]);
+    }
+  printf("\n");
+}
+
 #endif
