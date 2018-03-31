@@ -85,6 +85,20 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket) {
       continue;
     }
 
+    printf("\n the packet structure is:\n\n");
+    printf("capd packet->timestamp:  ");
+    /* phex(packet->timestamp, sizeof(packet->timestamp)); */
+    printf("capd packet->serial:  ");
+    /* phex(packet->serial, sizeof(packet->serial)); */
+    printf("capd packet->IV:  ");
+    phex(packet->IV, sizeof(packet->IV));
+    printf("capd packet=>challenge:  ");
+    phex(packet->challenge, sizeof(packet->challenge));
+    printf("capd packet->encBlock:  ");
+    phex(packet->encBlock, sizeof(packet->encBlock));
+    printf("capd packet->MAC:  ");
+    phex(packet->MAC, sizeof(packet->MAC));
+
     /* Construct SHA1-HMAC response and AES256 Key */
     {
       u8 response[20], tmp[100];
@@ -92,6 +106,12 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket) {
       memcpy(tmp, response, 20);
       memcpy(tmp + 20, packet->challenge, 32);
       SHA256Hash(tmp, 20 + 32, AES256Key);
+
+      printf("\n the AES256Key is constructed from:\n\n");
+      printf("challenge:  ");
+      phex(packet->challenge, sizeof(packet->challenge));
+      printf("response:  ");
+      phex(response, sizeof(response));
     }
 
     /* Decrypt encBlock */
@@ -121,6 +141,18 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket) {
         continue;
       }
     }
+
+    printf("plain->authAddr:  ");
+    phex(plain->authAddr, sizeof(plain->authAddr));
+    printf("plain->connAddr:  ");
+    phex(plain->connAddr, sizeof(plain->connAddr));
+    printf("plain->serverAddr:  ");
+    phex(plain->serverAddr, sizeof(plain->serverAddr));
+    printf("plain->OTP:  ");
+    phex(plain->OTP, sizeof(plain->OTP));
+
+    printf("SERVER:  ");
+    phex(serverAddr, sizeof(serverAddr));
 
     /* Verify addresses */
     if (memcmp(plain->serverAddr, serverAddr, addrSize) != 0) {
