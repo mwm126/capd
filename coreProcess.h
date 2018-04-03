@@ -151,8 +151,10 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket) {
     printf("plain->OTP:  ");
     phex(plain->OTP, sizeof(plain->OTP));
 
-    printf("SERVER:  ");
+    printf("serverAddr:  ");
     phex(serverAddr, sizeof(serverAddr));
+    printf("remoteAddr:  ");
+    phex(serverAddr, sizeof(remoteAddr));
 
     /* Verify addresses */
     if (memcmp(plain->serverAddr, serverAddr, addrSize) != 0) {
@@ -216,6 +218,13 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket) {
       int counter;
       OTP_t *OTP = (OTP_t *)OTPBuffer;
       decryptAES128ECB(plain->OTP, AES128Key, OTPBuffer);
+
+      printf("plain->OTP:  ");
+      phex(plain->OTP, sizeof(plain->OTP));
+      printf("AES128Key:  ");
+      phex(AES128Key, sizeof(AES128Key));
+      printf("OTPBuffer:  ");
+      phex(OTPBuffer, sizeof(OTPBuffer));
 
       /* Verify decrypted CRC */
       if (0xf0b8 != crc16(OTPBuffer, 16)) {
