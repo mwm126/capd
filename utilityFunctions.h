@@ -57,7 +57,7 @@ int lookUpSerial(FILE *f, int serial, char *username, char *destSystem,
                 txtPort, txtS, txtAES, txtHMAC) != EOF) {
     if (username[0] != '#') {
       s = atoi(txtS);
-      if (serial == s) {
+      /* if (serial == s) { */
         int data;
         *destPort = atoi(txtPort);
         for (i = 0; i < 16; i++) {
@@ -69,9 +69,10 @@ int lookUpSerial(FILE *f, int serial, char *username, char *destSystem,
           HMACKey[i] = (u8)data;
         }
         return 1;
-      }
+      /* } */
     }
   }
+  printf("SITS\n");
   return 0;
 }
 

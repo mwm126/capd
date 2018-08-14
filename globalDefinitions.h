@@ -49,7 +49,7 @@ char passwdFile[MAX_PATH] = "/etc/capd/capd.passwd";
 char counterFile[MAX_PATH] = "/etc/capd/capd.counter";
 char logFile[MAX_PATH] = "/var/log/capd.log";
 char jailPath[MAX_PATH] = "/tmp/capd/";
-char openSSHPath[MAX_PATH] = "/usr/sbin/openClose.sh";
+char openSSHPath[MAX_PATH] = "/home/mark/repos/capd/openClose.sh";
 char serverAddress[32];
 u32 deltaT = 30;       /* Maximum allowed clock skew from client to server */
 u32 initTimeout = 5;   /* Maximum time allowed to open local ssh connection */
