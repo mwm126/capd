@@ -6,9 +6,9 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
 {
 char netBuffer[BUFFER_SIZE];
 FILE *lf,*cf,*pf;
-int serial,destPort,timeout;
+int serial,destPort,timeout,i,loginAddr=-1;
 char username[32],destSystem[32];
-u8 remoteAddr[addrSize], serverAddr[addrSize] = {0x00};
+u8 remoteAddr[addrSize], serverAddr[MAX_NO_OF_SERVER_ADDR][addrSize]={{0x00}};
 u8 AES128Key[16], AES256Key[32], HMACKey[20];
 packet = (packet_t *)netBuffer;
 
@@ -35,29 +35,34 @@ if ((getgid() != gid) || (getuid() != uid))
 	fatal("SERVER HALT - Privilege not dropped in Core process.");
 }
 
-/* Dump initialization info into log file */
-logOutput(lf,0,"Starting CAPD");
-logOutput(lf,0,"  Password File     : %s",passwdFile);
-logOutput(lf,0,"  Counter File      : %s",counterFile);
-logOutput(lf,0,"  Log File          : %s",logFile);
-logOutput(lf,0,"  Jail Directory    : %s",jailPath);
-logOutput(lf,0,"  Packet DeltaT     : %d",deltaT);
-logOutput(lf,0,"  Login Timeout     : %d",initTimeout);
-logOutput(lf,0,"  Spoof Timeout     : %d",spoofTimeout);
-logOutput(lf,0,"  Firewall Script   : %s",openSSHPath);
-logOutput(lf,0,"  Unprivileged User : %s",user);
-logOutput(lf,0,"  UDP Port          : %d",port);
-logOutput(lf,0,"  Interface Address : %s",serverAddress);
-logOutput(lf,0,"  Verbosity Level   : %d",verbosity);
-logOutput(lf,0,"  CAPD Drop Priv uid: %d",uid);
-logOutput(lf,0,"  CAPD Drop Priv gid: %d",gid);
+if (noOfServerAddresses == 0)
+    fatal("SERVER HALT - No external addresses specified.");
 
-/* Parse server address */
-{
-struct sockaddr_in sa;
-inet_pton(AF_INET,serverAddress,&(sa.sin_addr));
-memcpy(serverAddr+12,&(sa.sin_addr),4);
-}
+/* Dump initialization info into log file */
+logOutput(lf,0,"Starting CAPD - Version %s",capdVersion);
+logOutput(lf,0,"  Password File      : %s",passwdFile);
+logOutput(lf,0,"  Counter File       : %s",counterFile);
+logOutput(lf,0,"  Log File           : %s",logFile);
+logOutput(lf,0,"  Jail Directory     : %s",jailPath);
+logOutput(lf,0,"  Packet DeltaT      : %d",deltaT);
+logOutput(lf,0,"  Login Timeout      : %d",initTimeout);
+logOutput(lf,0,"  Spoof Timeout      : %d",spoofTimeout);
+logOutput(lf,0,"  Firewall Script    : %s",openSSHPath);
+logOutput(lf,0,"  Unprivileged User  : %s",user);
+logOutput(lf,0,"  UDP Port           : %d",port);
+for (i=0;i<noOfServerAddresses;i++)
+    logOutput(lf,0,"  Interface Address %d: %s",i,serverAddress[i]);
+logOutput(lf,0,"  Verbosity Level    : %d",verbosity);
+logOutput(lf,0,"  CAPD Drop Priv uid : %d",uid);
+logOutput(lf,0,"  CAPD Drop Priv gid : %d",gid);
+
+/* Parse server addresses */
+for (i=0;i<noOfServerAddresses;i++)
+    {
+    struct sockaddr_in sa;
+    inet_pton(AF_INET,serverAddress[i],&(sa.sin_addr));
+    memcpy(serverAddr[i]+12,&(sa.sin_addr),4);
+    }
 
 while(1)
 {
@@ -103,18 +108,25 @@ while(1)
 	}
 	
 	/* Verify addresses */
-	if (memcmp(plain->serverAddr,serverAddr,addrSize) != 0)
-		{
+    {
+	loginAddr = -1;
+    for (i=0;i<noOfServerAddresses;i++)
+        if (memcmp(plain->serverAddr,serverAddr[i],addrSize) == 0)
+            {
+            loginAddr = i;
+            break;
+            }
+    if (loginAddr == -1)
+        {
 		char str[33];
 		logOutput(lf,1,
 			"Bad server address in decrypted block.  Serial: %d",serial);
-		arrayToHexString(serverAddr,str,16);
-		logOutput(lf,2,"     Packet Value   : %s",str);
 		arrayToHexString(plain->serverAddr,str,16);
 		logOutput(lf,2,"     Decrypted Value: %s",str);
 		continue;
 		}
-	if (memcmp(plain->authAddr,remoteAddr,addrSize) != 0)
+	}
+    if (memcmp(plain->authAddr,remoteAddr,addrSize) != 0)
 		{
 		char str[33];
 		logOutput(lf,1,
@@ -148,7 +160,7 @@ while(1)
 		}
 	}
 
-	/* Verify IV construction */	
+	/* Verify IV construction */
 	{
 	u8 tmp[100],digest[32];
 	memcpy(tmp,plain->entropy,32);
@@ -194,7 +206,8 @@ while(1)
 		continue;
 		}
 	updateCounterFileEntry(cf,serial,counter);
-	logOutput(lf,1,"Accepted connection: %s, %d, %d",username,serial,counter);
+	logOutput(lf,1,"Accepted connection: %s, %d, %d, %s",
+        username,serial,counter,serverAddress[loginAddr]);
 	}
 	
 	/* Setup timeout */

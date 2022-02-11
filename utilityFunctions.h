@@ -50,7 +50,7 @@ int lookUpSerial (	FILE *f, int serial, char *username, char *destSystem,
 {
 int i,s;
 char txtPort[8+1],txtS[20+1],txtAES[40+1],txtHMAC[50+1];
-lseek(fileno(f),0,0);
+rewind(f);
 while(fscanf(f,"%32s %32s %8s %20s %40s %50s\n",
 		username,destSystem,txtPort,txtS,txtAES,txtHMAC) != EOF)
 	{

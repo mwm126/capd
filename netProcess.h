@@ -59,7 +59,7 @@ while(1)	/* Server loop */
 	lenRemote = sizeof(siRemote);
 	len = recvfrom(udpSocket,udpBuffer,BUFFER_SIZE,0,
 					(struct sockaddr *)&siRemote, &lenRemote);
-					
+
 	/* Basic tests */
 	if (len != sizeof(packet_t)) continue;
 	localTime=currentTime();

@@ -26,7 +26,7 @@ for (i=1;i<argc;i++)
 	{
 	if (strcmp(argv[i],"-h")==0)
 		{
-		printf("capd - Cloaked Access Protocol Daemon\n\n");
+		printf("capd - Cloaked Access Protocol Daemon - Version %s\n\n",capdVersion);
 		printf("  Usage:\n");
 		printf("  -pw, --password-file [capd password file]\n");
 		printf("  -c,  --counter-file [capd counter file]\n"); 
@@ -38,7 +38,7 @@ for (i=1;i<argc;i++)
 		printf("  -u,  --user [user for drop privilege]\n");
 		printf("  -s,  --script [fully resolved path to firewall script]\n");
 		printf("  -p,  --port [UDP port]\n");
-		printf("  -a,  --address [Server interface IP address\n");
+		printf("  -a,  --address [Server interface IP address]\n");
 		printf("  -v,  --verbosity [verbosity level]\n\n");
 		return 0;
 		}
@@ -62,8 +62,9 @@ for (i=1;i<argc;i++)
 		strcpy(openSSHPath,argv[++i]);
 	if ((strcmp(argv[i],"-p")==0)  || (strcmp(argv[i],"--port")==0))
 		port=atoi(argv[++i]);
-	if ((strcmp(argv[i],"-a")==0)  || (strcmp(argv[i],"--address")==0))
-		strcpy(serverAddress,argv[++i]);
+	if (    ((strcmp(argv[i],"-a")==0)  || (strcmp(argv[i],"--address")==0)) &&
+            (noOfServerAddresses < MAX_NO_OF_SERVER_ADDR-1) )
+		strcpy(serverAddress[noOfServerAddresses++],argv[++i]);
 	if ((strcmp(argv[i],"-v")==0)  || (strcmp(argv[i],"--verbosity")==0))
 		verbosity=atoi(argv[++i]);	
 	verbosity = BOUND(verbosity,0,2);

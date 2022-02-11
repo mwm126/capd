@@ -37,18 +37,21 @@ typedef uint64_t u64;
 #define chksumSize SHA256_DIGEST_LENGTH
 #define MACSize SHA256_DIGEST_LENGTH
 #define addrTxtSize INET6_ADDRSTRLEN
+#define MAX_NO_OF_SERVER_ADDR 10
 
 /* File permission macros */
 #define RWx 384
 #define rwX 64
 
 /* Global Control Variables */
+char capdVersion[40]="1.03";
 char passwdFile[MAX_PATH]="/etc/capd/capd.passwd";
 char counterFile[MAX_PATH]="/etc/capd/capd.counter";
 char logFile[MAX_PATH]="/var/log/capd.log";
 char jailPath[MAX_PATH]="/tmp/capd/";
 char openSSHPath[MAX_PATH]="/usr/sbin/openClose.sh";
-char serverAddress[32];
+char serverAddress[MAX_NO_OF_SERVER_ADDR][32]={{0x00}};
+int noOfServerAddresses = 0;
 u32 deltaT = 30; /* Maximum allowed clock skew from client to server */
 u32 initTimeout = 5; /* Maximum time allowed to open local ssh connection */
 u32 spoofTimeout = 30; /* Maximum time allowed to open spoofed ssh connection */
