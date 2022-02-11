@@ -1,6 +1,8 @@
 #ifndef COUNTERFUNCTIONS_H
 #define COUNTERFUNCTIONS_H
 
+#include "globalDefinitions.h"
+
 /*********************************************/
 /*       Counter Manangement Functions       */
 /*********************************************/

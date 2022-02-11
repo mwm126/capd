@@ -1,6 +1,8 @@
 #ifndef CRYPTOFUNCTIONS_H
 #define CRYPTOFUNCTIONS_H
 
+#include "globalDefinitions.h"
+
 /***********************************************/
 /*     Cryptography Functions and Wrappers     */
 /***********************************************/
@@ -18,7 +20,7 @@ void SHA1HMAC(u8 *chal, int chalLen, u8 *key, int keyLen, u8 *resp)
     return;
 }
 
-void decryptAES128ECB(u8 *cryptText, int cryptLen, u8 *key, u8 *plainText)
+void decryptAES128ECB(u8 *cryptText, u8 *key, u8 *plainText)
 {
     AES_KEY aeskey;
     AES_set_decrypt_key((unsigned char *)key, 128, &aeskey);

@@ -1,6 +1,8 @@
 #ifndef UTILITYFUNCTIONS_H
 #define UTILITYFUNCTIONS_H
 
+#include "globalDefinitions.h"
+
 /*********************************************/
 /*             Utility Functions             */
 /*********************************************/
@@ -61,7 +63,7 @@ int lookUpSerial(FILE *f, int serial, char *username, char *destSystem, int *des
             s = atoi(txtS);
             if (serial == s)
             {
-                int data;
+                unsigned int data;
                 *destPort = atoi(txtPort);
                 for (i = 0; i < 16; i++)
                 {

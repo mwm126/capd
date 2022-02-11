@@ -14,7 +14,7 @@ void authProcess(int authToCoreSocket, int netPID, int corePID)
     char tmp[15];
     char hostAddr[32];
     char allowedAddr[addrTxtSize];
-    int i, port, timeLimit;
+    int port, timeLimit;
 
     /* This process retains privilege and is unjailed. */
     while (1)
@@ -32,7 +32,7 @@ void authProcess(int authToCoreSocket, int netPID, int corePID)
         }
 
         /* Sanitize allowedAddr and hostAddr to prevent script hijacking */
-        for (i = 0; i < sizeof(allowedAddr); i++)
+        for (size_t i = 0; i < sizeof(allowedAddr); i++)
             if (!((allowedAddr[i] == 0) ||                               /* Null OK */
                   (allowedAddr[i] == 46) ||                              /* Period OK */
                   (allowedAddr[i] == 58) ||                              /* Colon OK (IPV6) */
@@ -41,7 +41,7 @@ void authProcess(int authToCoreSocket, int netPID, int corePID)
                   ((allowedAddr[i] >= 65) && (allowedAddr[i] <= 70))     /* A-F OK (IPV6) */
                   ))
                 allowedAddr[i] = 46; /* Replace bad character with period */
-        for (i = 0; i < sizeof(hostAddr); i++)
+        for (size_t i = 0; i < sizeof(hostAddr); i++)
             if (!((hostAddr[i] == 0) ||                            /* Null OK */
                   (hostAddr[i] == 46) ||                           /* Period OK */
                   (hostAddr[i] == 58) ||                           /* Colon OK (IPV6) */
@@ -58,18 +58,18 @@ void authProcess(int authToCoreSocket, int netPID, int corePID)
 
         /* Build command line for openSSH.sh call */
         memset(commandLine, 0, sizeof(commandLine));
-        strncpy(commandLine, openSSHPath, sizeof(openSSHPath));
-        strncat(commandLine, " ", 1);
-        strncat(commandLine, allowedAddr, sizeof(allowedAddr));
-        strncat(commandLine, " ", 1);
-        strncat(commandLine, hostAddr, sizeof(hostAddr));
-        strncat(commandLine, " ", 1);
+        strcpy(commandLine, openSSHPath);
+        strcat(commandLine, " ");
+        strcat(commandLine, allowedAddr);
+        strcat(commandLine, " ");
+        strcat(commandLine, hostAddr);
+        strcat(commandLine, " ");
         sprintf(tmp, "%d", port);
-        strncat(commandLine, tmp, sizeof(tmp));
-        strncat(commandLine, " ", 1);
+        strcat(commandLine, tmp);
+        strcat(commandLine, " ");
         sprintf(tmp, "%d", timeLimit);
-        strncat(commandLine, tmp, sizeof(tmp));
-        strncat(commandLine, " &", 2);
+        strcat(commandLine, tmp);
+        strcat(commandLine, " &");
 
         /* Execute openSSH.sh command */
         system(commandLine);
