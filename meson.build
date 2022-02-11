@@ -11,3 +11,5 @@ executable('capd',
            dependencies: cryptolib,
            c_args: ['-D_DEFAULT_SOURCE'],
            install : true)
+
+subdir('test')
