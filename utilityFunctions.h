@@ -1,6 +1,7 @@
 #ifndef UTILITYFUNCTIONS_H
 #define UTILITYFUNCTIONS_H
 
+#include "errno.h"
 #include "globalDefinitions.h"
 
 /*********************************************/
@@ -15,7 +16,11 @@ u32 currentTime(void)
 
 void fatal(char *msg)
 {
+  if (errno) {
     perror(msg);
+  } else {
+    printf("%s\n", msg);
+  }
     exit(1);
 }
 
