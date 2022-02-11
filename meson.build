@@ -1,5 +1,5 @@
 project('capd', 'c',
-  version : '1.03',
+  version : '1.04-dev',
   default_options : ['warning_level=3'])
 
 

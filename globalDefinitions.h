@@ -25,7 +25,7 @@
 
 enum{FALSE,TRUE};
 typedef uint8_t u8;
-typedef uint16_t u16; 
+typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 
@@ -44,7 +44,7 @@ typedef uint64_t u64;
 #define rwX 64
 
 /* Global Control Variables */
-char capdVersion[40]="1.03";
+char capdVersion[40]="1.03-dev";
 char passwdFile[MAX_PATH]="/etc/capd/capd.passwd";
 char counterFile[MAX_PATH]="/etc/capd/capd.counter";
 char logFile[MAX_PATH]="/var/log/capd.log";
@@ -62,39 +62,39 @@ int verbosity=1;
 
 /* Packet, Payload, and OTP Structures and Buffers */
 typedef struct
-	{
-	u8 authAddr[addrSize];
-	u8 connAddr[addrSize];
-	u8 serverAddr[addrSize];
-	u8 OTP[OTPSize];
-	char username[32];
-	u8 entropy[32];
-	u8 chksum[chksumSize];
-	} plain_t;
+  {
+  u8 authAddr[addrSize];
+  u8 connAddr[addrSize];
+  u8 serverAddr[addrSize];
+  u8 OTP[OTPSize];
+  char username[32];
+  u8 entropy[32];
+  u8 chksum[chksumSize];
+  } plain_t;
 u8 plainBuffer[sizeof(plain_t)];
 plain_t *plain = (plain_t *)plainBuffer;
 #define chksumBlockSize (sizeof(plain_t)-chksumSize)
 
 typedef struct
-	{
-	int timestamp;
-	int serial;
-	u8 IV[16];
-	u8 challenge[32];
-	u8 encBlock[sizeof(plain_t)];
-	u8 MAC[32];
-	} packet_t;
-	
+  {
+  int timestamp;
+  int serial;
+  u8 IV[16];
+  u8 challenge[32];
+  u8 encBlock[sizeof(plain_t)];
+  u8 MAC[32];
+  } packet_t;
+
 packet_t *packet=NULL;
 
 #define MACBlockSize (sizeof(packet_t)-MACSize)
 
 typedef struct
-	{
-	u8 OTPChallenge[6];
-	u16 insertCounter;
-	u8 timestamp[3];
-	u8 sessionCounter;
-	u16 random;
-	u16 crc;
-	} OTP_t;
+  {
+  u8 OTPChallenge[6];
+  u16 insertCounter;
+  u8 timestamp[3];
+  u8 sessionCounter;
+  u16 random;
+  u16 crc;
+  } OTP_t;
