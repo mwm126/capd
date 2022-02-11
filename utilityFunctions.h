@@ -1,3 +1,6 @@
+#ifndef UTILITYFUNCTIONS_H
+#define UTILITYFUNCTIONS_H
+
 /*********************************************/
 /*             Utility Functions             */
 /*********************************************/
@@ -133,3 +136,4 @@ out8[6] = in8[1];
 out8[7] = in8[0];
 return out64;
 }
+#endif

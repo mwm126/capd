@@ -1,3 +1,6 @@
+#ifndef COUNTERFUNCTIONS_H
+#define COUNTERFUNCTIONS_H
+
 /*********************************************/
 /*       Counter Manangement Functions       */
 /*********************************************/
@@ -47,3 +50,4 @@ if (!found)
 return;
 }
 
+#endif

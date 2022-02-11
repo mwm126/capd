@@ -1,3 +1,6 @@
+#ifndef FIXEDKEY_H
+#define FIXEDKEY_H
+
 /************************************************************/
 /*    Derives shared keys from seed and simple algorithm    */
 /************************************************************/
@@ -33,3 +36,5 @@ void deriveFixedKeys(void)
 	for (i=0;i<32;i++) seedFooter[i]=0xff;
 	return;
 }
+
+#endif

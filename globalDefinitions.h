@@ -1,3 +1,6 @@
+#ifndef GLOBALDEFINITIONS_H
+#define GLOBALDEFINITIONS_H
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
@@ -98,3 +101,5 @@ typedef struct
   u16 random;
   u16 crc;
   } OTP_t;
+
+#endif

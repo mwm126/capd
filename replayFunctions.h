@@ -1,3 +1,6 @@
+#ifndef REPLAYFUNCTIONS_H
+#define REPLAYFUNCTIONS_H
+
 /***************************************/
 /*       Replay Bitmap Functions       */
 /***************************************/
@@ -80,3 +83,4 @@ void replaySet(u32 key, int time)
 			}
 	return;
 }
+#endif

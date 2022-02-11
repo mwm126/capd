@@ -1,3 +1,6 @@
+#ifndef CRYPTOFUNCTIONS_H
+#define CRYPTOFUNCTIONS_H
+
 /***********************************************/
 /*     Cryptography Functions and Wrappers     */
 /***********************************************/
@@ -54,3 +57,5 @@ for (i=0;i<dataLen;i++)
 	}
 return crc;
 }
+
+#endif

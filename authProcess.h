@@ -1,3 +1,6 @@
+#ifndef AUTHPROCESS_H
+#define AUTHPROCESS_H
+
 /************************************/
 /*   Authorization of connections   */
 /************************************/
@@ -76,3 +79,5 @@ while(1)
 return;
 }
 
+
+#endif

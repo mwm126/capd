@@ -1,3 +1,6 @@
+#ifndef COREPROCESS_H
+#define COREPROCESS_H
+
 /******************************************************/
 /*    Core process that handles logging and crypto    */
 /******************************************************/
@@ -238,3 +241,4 @@ while(1)
 }
 return;
 }
+#endif

@@ -1,3 +1,6 @@
+#ifndef NETPROCESS_H
+#define NETPROCESS_H
+
 /*************************************************************/
 /*   Opens UDP socket and does basic processing of packets   */
 /*************************************************************/
@@ -88,3 +91,5 @@ while(1)	/* Server loop */
 	}
 return;
 }
+
+#endif
