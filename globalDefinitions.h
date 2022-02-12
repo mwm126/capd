@@ -49,23 +49,6 @@ typedef uint64_t u64;
 #define RWx 384
 #define rwX 64
 
-/* Global Control Variables */
-char capdVersion[40] = "1.03-dev";
-char passwdFile[MAX_PATH] = "/etc/capd/capd.passwd";
-char counterFile[MAX_PATH] = "/etc/capd/capd.counter";
-char logFile[MAX_PATH] = "/var/log/capd.log";
-char jailPath[MAX_PATH] = "/tmp/capd/";
-char openSSHPath[MAX_PATH] = "/usr/sbin/openClose.sh";
-char serverAddress[MAX_NO_OF_SERVER_ADDR][32] = {{0x00}};
-int noOfServerAddresses = 0;
-u32 deltaT = 30;       /* Maximum allowed clock skew from client to server */
-u32 initTimeout = 5;   /* Maximum time allowed to open local ssh connection */
-u32 spoofTimeout = 30; /* Maximum time allowed to open spoofed ssh connection */
-char user[32] = "capd";
-uid_t uid, gid;
-int port = 62201;
-int verbosity = 1;
-
 /* Packet, Payload, and OTP Structures and Buffers */
 typedef struct
 {
@@ -77,8 +60,6 @@ typedef struct
     u8 entropy[32];
     u8 chksum[chksumSize];
 } plain_t;
-u8 plainBuffer[sizeof(plain_t)];
-plain_t *plain = (plain_t *)plainBuffer;
 #define chksumBlockSize (sizeof(plain_t) - chksumSize)
 
 typedef struct
@@ -91,8 +72,6 @@ typedef struct
     u8 MAC[32];
 } packet_t;
 
-packet_t *packet = NULL;
-
 #define MACBlockSize (sizeof(packet_t) - MACSize)
 
 typedef struct
@@ -104,5 +83,24 @@ typedef struct
     u16 random;
     u16 crc;
 } OTP_t;
+
+void init_usage(int argc, char *argv[]);
+
+char *capdVersion();
+char *passwdFile();
+char *counterFile();
+char *logFile();
+char *jailPath();
+char *openSSHPath();
+char *serverAddress(int n);
+int noOfServerAddresses();
+u32 deltaT();
+u32 initTimeout();
+u32 spoofTimeout();
+char *user();
+uid_t uid();
+uid_t gid();
+int port();
+int verbosity();
 
 #endif
