@@ -6,7 +6,6 @@
 /*************************************************************/
 
 #include "cryptoFunctions.h"
-#include "fixedKey.h"
 #include "globalDefinitions.h"
 #include "replayFunctions.h"
 #include "utilityFunctions.h"
