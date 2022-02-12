@@ -8,10 +8,12 @@
 /*   Authorization of connections   */
 /************************************/
 
+#define MAX_CMDLINE (MAX_PATH + 150)
+void build_command_line(char commandLine[], char allowedAddr[addrTxtSize], char hostAddr[32], int timeLimit);
+
 void authProcess(int authToCoreSocket, int netPID, int corePID)
 {
     char commandLine[MAX_PATH + 150];
-    char tmp[15];
     char hostAddr[32];
     char allowedAddr[addrTxtSize];
     int port, timeLimit;
@@ -56,26 +58,32 @@ void authProcess(int authToCoreSocket, int netPID, int corePID)
         timeLimit = BOUND(timeLimit, 0, 300);
         port = BOUND(port, 0, 65535);
 
-        /* Build command line for openSSH.sh call */
-        memset(commandLine, 0, sizeof(commandLine));
-        strcpy(commandLine, openSSHPath);
-        strcat(commandLine, " ");
-        strcat(commandLine, allowedAddr);
-        strcat(commandLine, " ");
-        strcat(commandLine, hostAddr);
-        strcat(commandLine, " ");
-        sprintf(tmp, "%d", port);
-        strcat(commandLine, tmp);
-        strcat(commandLine, " ");
-        sprintf(tmp, "%d", timeLimit);
-        strcat(commandLine, tmp);
-        strcat(commandLine, " &");
+        build_command_line(commandLine, allowedAddr, hostAddr, timeLimit);
 
         /* Execute openSSH.sh command */
         system(commandLine);
         //	printf("%s\n",commandLine);
     }
     return;
+}
+
+void build_command_line(char commandLine[], char allowedAddr[addrTxtSize], char hostAddr[32], int timeLimit)
+{
+    char tmp[15];
+    /* Build command line for openSSH.sh call */
+    memset(commandLine, 0, MAX_CMDLINE);
+    strcpy(commandLine, openSSHPath);
+    strcat(commandLine, " ");
+    strcat(commandLine, allowedAddr);
+    strcat(commandLine, " ");
+    strcat(commandLine, hostAddr);
+    strcat(commandLine, " ");
+    sprintf(tmp, "%d", port);
+    strcat(commandLine, tmp);
+    strcat(commandLine, " ");
+    sprintf(tmp, "%d", timeLimit);
+    strcat(commandLine, tmp);
+    strcat(commandLine, " &");
 }
 
 #endif

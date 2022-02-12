@@ -6,6 +6,8 @@ project('capd', 'c',
 cc = meson.get_compiler('c')
 cryptolib = cc.find_library('crypto')
 
+incdir = include_directories('.')
+
 executable('capd',
            'capd.c',
            dependencies: cryptolib,
