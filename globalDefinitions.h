@@ -86,21 +86,21 @@ typedef struct
 
 void init_usage(int argc, char *argv[]);
 
-char *capdVersion();
-char *passwdFile();
-char *counterFile();
-char *logFile();
-char *jailPath();
-char *openSSHPath();
+char *capdVersion(void);
+char *passwdFile(void);
+char *counterFile(void);
+char *logFile(void);
+char *jailPath(void);
+char *openSSHPath(void);
 char *serverAddress(int n);
-int noOfServerAddresses();
-u32 deltaT();
-u32 initTimeout();
-u32 spoofTimeout();
-char *user();
-uid_t uid();
-uid_t gid();
-int port();
-int verbosity();
+int noOfServerAddresses(void);
+u32 deltaT(void);
+u32 initTimeout(void);
+u32 spoofTimeout(void);
+char *user(void);
+uid_t uid(void);
+uid_t gid(void);
+int port(void);
+int verbosity(void);
 
 #endif

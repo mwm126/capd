@@ -1,6 +1,3 @@
-#ifndef UTILITYFUNCTIONS_H
-#define UTILITYFUNCTIONS_H
-
 #include "errno.h"
 #include "globalDefinitions.h"
 
@@ -10,7 +7,7 @@
 /*             Utility Functions             */
 /*********************************************/
 
-void fatal(char *msg)
+void fatal(const char *msg)
 {
     if (errno)
     {
@@ -23,7 +20,7 @@ void fatal(char *msg)
     exit(1);
 }
 
-void logOutput(FILE *f, int l, char *fmt, ...)
+void logOutput(FILE *f, int l, const char *fmt, ...)
 {
     char timeStr[100];
     time_t rawtime;
@@ -97,48 +94,3 @@ void identifyEndianess(void)
         endian = BIG;
     return;
 }
-
-u16 swap16(u16 input)
-{
-    u16 in16, out16;
-    u8 *in8 = (u8 *)&in16, *out8 = (u8 *)&out16;
-    if (endian == LITTLE)
-        return input;
-    in16 = input;
-    out8[0] = in8[1];
-    out8[1] = in8[0];
-    return out16;
-}
-
-u32 swap32(u32 input)
-{
-    u32 in32, out32;
-    u8 *in8 = (u8 *)&in32, *out8 = (u8 *)&out32;
-    in32 = input;
-    if (endian == LITTLE)
-        return input;
-    out8[0] = in8[3];
-    out8[1] = in8[2];
-    out8[2] = in8[1];
-    out8[3] = in8[0];
-    return out32;
-}
-
-u64 swap64(u64 input)
-{
-    u64 in64, out64;
-    u8 *in8 = (u8 *)&in64, *out8 = (u8 *)&out64;
-    in64 = input;
-    if (endian == LITTLE)
-        return input;
-    out8[0] = in8[7];
-    out8[1] = in8[6];
-    out8[2] = in8[5];
-    out8[3] = in8[4];
-    out8[4] = in8[3];
-    out8[5] = in8[2];
-    out8[6] = in8[1];
-    out8[7] = in8[0];
-    return out64;
-}
-#endif
