@@ -152,7 +152,10 @@ void init_usage(int argc, char *argv[])
         struct passwd *pw;
         pw = getpwnam(_user);
         if (pw == NULL)
+        {
             fatal("SERVER HALT - User not found");
+            return;
+        }
         _uid = pw->pw_uid;
         _gid = pw->pw_gid;
         mkdir(_jailPath, rwX);

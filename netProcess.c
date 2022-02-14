@@ -88,8 +88,14 @@ void netProcess(int netToCoreSocket)
         chmod(processJailPath, rwX);
         chdir(processJailPath);
         chroot(processJailPath);
-        setgid(gid());
-        setuid(uid());
+        if (setgid(gid()))
+        {
+            fatal("Error in setgid()");
+        };
+        if (setuid(uid()))
+        {
+            fatal("Error in setuid()");
+        };
         if ((getgid() != gid()) || (getuid() != uid()))
             fatal("SERVER HALT - Privilege not dropped in Net process.");
     }
