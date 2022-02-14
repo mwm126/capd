@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gcc -Wall -Wno-unused-result -lrt -O0 -o capd *.c -lcrypto
+gcc -Wall -Wno-unused-result -lrt -O3 -o capd *.c -lcrypto
