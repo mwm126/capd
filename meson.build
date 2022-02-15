@@ -1,5 +1,5 @@
 project('capd', 'c',
-  version : '1.04-dev',
+  version : files('VERSION'),
   default_options : ['c_std=c2x', 'warning_level=3'])
 
 
@@ -22,7 +22,10 @@ executable('capd',
            'capd.c',
            proc_srcs,
            dependencies: cryptolib,
-           c_args: ['-D_DEFAULT_SOURCE'],
+           c_args: [
+             '-D_DEFAULT_SOURCE',
+             '-DCAPD_VERSION='+meson.project_version()
+           ],
            install : true)
 
 subdir('test')

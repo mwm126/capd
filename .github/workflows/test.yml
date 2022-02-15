@@ -1,0 +1,24 @@
+name: C CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+
+    - name: Install Meson
+      run: pip install --no-cache-dir meson==0.61.1 ninja==1.10.2.3
+
+    - name: Configure
+      run: meson build
+
+    - name: Build
+      run: meson compile -C build
+
+    - name: Test
+      run: meson test -C build
