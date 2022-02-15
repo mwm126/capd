@@ -9,12 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Configure
-      run: meson build
-
-    - name: Build
-      run: meson compile -C build
-
-    - name: Test
-      run: meson test -C build
+    - uses: actions/setup-python@v1
+    - uses: BSFishy/meson-build@v1.0.3
+      with:
+        action: test
