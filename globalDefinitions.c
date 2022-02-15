@@ -1,8 +1,11 @@
 #include "globalDefinitions.h"
 #include "utilityFunctions.h"
 
+#define STRINGIZE(x) #x
+#define QUOTE(x) STRINGIZE(x)
+
 /* Global Control Variables */
-char _capdVersion[40] = "1.03-dev";
+char _capdVersion[40] = QUOTE(CAPD_VERSION);
 char _passwdFile[MAX_PATH] = "/etc/capd/capd.passwd";
 char _counterFile[MAX_PATH] = "/etc/capd/capd.counter";
 char _logFile[MAX_PATH] = "/var/log/capd.log";
@@ -103,7 +106,7 @@ void init_usage(int argc, char *argv[])
     {
         if (strcmp(argv[i], "-h") == 0)
         {
-            printf("capd - Cloaked Access Protocol Daemon - Version %s\n\n", _capdVersion);
+            printf("capd - Cloaked Access Protocol Daemon - %s\n\n", _capdVersion);
             printf("  Usage:\n");
             printf("  -pw, --password-file [capd password file]\n");
             printf("  -c,  --counter-file [capd counter file]\n");
