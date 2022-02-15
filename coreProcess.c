@@ -64,22 +64,22 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
         fatal("SERVER HALT - No external addresses specified.");
 
     /* Dump initialization info into log file */
-    logOutput(lf, 0, "Starting CAPD - Version %s", capdVersion);
+    logOutput(lf, 0, "Starting CAPD - Version %s", capdVersion());
     logOutput(lf, 0, "  Password File      : %s", passwdFile());
     logOutput(lf, 0, "  Counter File       : %s", counterFile());
-    logOutput(lf, 0, "  Log File           : %s", logFile);
-    logOutput(lf, 0, "  Jail Directory     : %s", jailPath);
-    logOutput(lf, 0, "  Packet DeltaT      : %d", deltaT);
+    logOutput(lf, 0, "  Log File           : %s", logFile());
+    logOutput(lf, 0, "  Jail Directory     : %s", jailPath());
+    logOutput(lf, 0, "  Packet DeltaT      : %d", deltaT());
     logOutput(lf, 0, "  Login Timeout      : %d", initTimeout());
     logOutput(lf, 0, "  Spoof Timeout      : %d", spoofTimeout());
-    logOutput(lf, 0, "  Firewall Script    : %s", openSSHPath);
-    logOutput(lf, 0, "  Unprivileged User  : %s", user);
-    logOutput(lf, 0, "  UDP Port           : %d", port);
+    logOutput(lf, 0, "  Firewall Script    : %s", openSSHPath());
+    logOutput(lf, 0, "  Unprivileged User  : %s", user());
+    logOutput(lf, 0, "  UDP Port           : %d", port());
     for (i = 0; i < noOfServerAddresses(); i++)
         logOutput(lf, 0, "  Interface Address %d: %s", i, serverAddress(i));
-    logOutput(lf, 0, "  Verbosity Level    : %d", verbosity);
-    logOutput(lf, 0, "  CAPD Drop Priv uid : %d", uid);
-    logOutput(lf, 0, "  CAPD Drop Priv gid : %d", gid);
+    logOutput(lf, 0, "  Verbosity Level    : %d", verbosity());
+    logOutput(lf, 0, "  CAPD Drop Priv uid : %d", uid());
+    logOutput(lf, 0, "  CAPD Drop Priv gid : %d", gid());
 
     /* Parse server addresses */
     for (i = 0; i < noOfServerAddresses(); i++)

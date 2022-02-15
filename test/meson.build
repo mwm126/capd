@@ -1,10 +1,17 @@
 unity = subproject('unity')
 unity_dep = unity.get_variable('unity_dep')
 
-test_exe = executable(
+auth_test_exe = executable(
   'test_auth', 'test_auth.c', proc_srcs,
   include_directories: incdir,
   c_args: ['-D_DEFAULT_SOURCE'],
   dependencies : [cryptolib, unity_dep])
 
-test('name of test', test_exe)
+glob_test_exe = executable(
+  'test_glob', 'test_globalDefinitions.c', proc_srcs,
+  include_directories: incdir,
+  c_args: ['-D_DEFAULT_SOURCE'],
+  dependencies : [cryptolib, unity_dep])
+
+test('auth tests', auth_test_exe)
+test('global tests', glob_test_exe)

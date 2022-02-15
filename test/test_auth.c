@@ -16,7 +16,9 @@ void test_build_command_line(void)
     char hostAddr[32] = "99.8.77.66";
     char destAddr[32] = "44.33.22.11";
     int timeLimit = 12345;
+
     build_command_line(commandLine, allowedAddr, hostAddr, timeLimit, destAddr);
+
     TEST_ASSERT_EQUAL_STRING("/usr/sbin/openClose.sh 192.168.10.200 99.8.77.66 62201 12345 44.33.22.11 &", commandLine);
 }
 
