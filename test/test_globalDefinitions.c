@@ -25,7 +25,7 @@ void test_init_usage_defaults(void)
     TEST_ASSERT_EQUAL_INT(30, spoofTimeout());
     TEST_ASSERT_EQUAL_STRING("/usr/sbin/openClose.sh", openSSHPath());
     TEST_ASSERT_EQUAL_STRING("mark", user());
-    TEST_ASSERT_EQUAL_INT(62201, port());
+    TEST_ASSERT_EQUAL_INT(62201, capPort());
 }
 
 void test_init_usage_cmdline(void)
@@ -65,7 +65,7 @@ void test_init_usage_cmdline(void)
     TEST_ASSERT_EQUAL_INT(777, spoofTimeout());
     TEST_ASSERT_EQUAL_STRING("/open/close.sh", openSSHPath());
     TEST_ASSERT_EQUAL_STRING("mark", user());
-    TEST_ASSERT_EQUAL_INT(999, port());
+    TEST_ASSERT_EQUAL_INT(999, capPort());
 }
 
 int main(void)

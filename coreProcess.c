@@ -1,4 +1,5 @@
 #include "coreProcess.h"
+#include "globalDefinitions.h"
 
 u8 plainBuffer[sizeof(plain_t)];
 plain_t *plain = (plain_t *)plainBuffer;
@@ -74,7 +75,7 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
     logOutput(lf, 0, "  Spoof Timeout      : %d", spoofTimeout());
     logOutput(lf, 0, "  Firewall Script    : %s", openSSHPath());
     logOutput(lf, 0, "  Unprivileged User  : %s", user());
-    logOutput(lf, 0, "  UDP Port           : %d", port());
+    logOutput(lf, 0, "  UDP Port           : %d", capPort());
     for (i = 0; i < noOfServerAddresses(); i++)
         logOutput(lf, 0, "  Interface Address %d: %s", i, serverAddress(i));
     logOutput(lf, 0, "  Verbosity Level    : %d", verbosity());

@@ -100,7 +100,7 @@ u32 spoofTimeout(void);
 char *user(void);
 uid_t uid(void);
 uid_t gid(void);
-int port(void);
+int capPort(void);
 int verbosity(void);
 
 #endif

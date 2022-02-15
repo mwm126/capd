@@ -73,7 +73,7 @@ void netProcess(int netToCoreSocket)
         fatal("SERVER HALT - UDP Socket creation failed.");
 
     siLocal.sin_family = AF_INET;
-    siLocal.sin_port = htons(port());
+    siLocal.sin_port = htons(capPort());
     siLocal.sin_addr.s_addr = htonl(INADDR_ANY);
     if (bind(udpSocket, (struct sockaddr *)&siLocal, sizeof(siLocal)) < 0)
         fatal("SERVER HALT - Bind of UDP Socket failed.");

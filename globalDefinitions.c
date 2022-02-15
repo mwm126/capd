@@ -86,7 +86,7 @@ uid_t gid()
     return _gid;
 }
 
-int port()
+int capPort()
 {
     return _port;
 }

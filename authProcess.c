@@ -1,13 +1,13 @@
 #include "globalDefinitions.h"
 #include "utilityFunctions.h"
 
+#include "authProcess.h"
+
 /************************************/
 /*   Authorization of connections   */
 /************************************/
 
 #define MAX_CMDLINE (MAX_PATH + 150)
-void build_command_line(char commandLine[], char allowedAddr[addrTxtSize], char hostAddr[32], int timeLimit,
-                        char destAddr[32]);
 
 void authProcess(int authToCoreSocket, int netPID, int corePID)
 {
@@ -57,7 +57,7 @@ void authProcess(int authToCoreSocket, int netPID, int corePID)
         timeLimit = BOUND(timeLimit, 0, 300);
         port = BOUND(port, 0, 65535);
 
-        build_command_line(commandLine, allowedAddr, hostAddr, timeLimit, serverAddress(loginAddr));
+        build_command_line(commandLine, allowedAddr, hostAddr, timeLimit, serverAddress(loginAddr), port);
 
         /* Execute openSSH.sh command */
         system(commandLine);
@@ -67,7 +67,7 @@ void authProcess(int authToCoreSocket, int netPID, int corePID)
 }
 
 void build_command_line(char commandLine[], char allowedAddr[addrTxtSize], char hostAddr[32], int timeLimit,
-                        char destAddr[32])
+                        char destAddr[32], int destPort)
 {
     char tmp[15];
     /* Build command line for openSSH.sh call */
@@ -78,7 +78,7 @@ void build_command_line(char commandLine[], char allowedAddr[addrTxtSize], char 
     strcat(commandLine, " ");
     strcat(commandLine, hostAddr);
     strcat(commandLine, " ");
-    sprintf(tmp, "%d", port());
+    sprintf(tmp, "%d", destPort);
     strcat(commandLine, tmp);
     strcat(commandLine, " ");
     sprintf(tmp, "%d", timeLimit);
