@@ -160,24 +160,24 @@ void init_usage(int argc, char *argv[])
             _verbosity = atoi(argv[++i]);
         _verbosity = BOUND(_verbosity, 0, 2);
     }
+}
 
-    /* Security Checks and File/Directory Setup */
+void setup_security(uid_t uid, gid_t gid)
+/* Security Checks and File/Directory Setup */
+{
+    struct passwd *pw = getpwnam(_user);
+    if (pw == NULL)
     {
-        struct passwd *pw;
-        pw = getpwnam(_user);
-        if (pw == NULL)
-        {
-            fatal("SERVER HALT - User not found");
-            return;
-        }
-        _uid = pw->pw_uid;
-        _gid = pw->pw_gid;
-        mkdir(_jailPath, rwX);
-        chown(_jailPath, 0, 0);
-        chmod(_jailPath, rwX);
-        chown(_passwdFile, 0, 0);
-        chmod(_passwdFile, RWx);
-        chown(_counterFile, 0, 0);
-        chmod(_counterFile, RWx);
+        fatal("SERVER HALT - User not found");
+        return;
     }
+    _uid = pw->pw_uid;
+    _gid = pw->pw_gid;
+    ABORT_IF_ERR(mkdir(_jailPath, rwX), "Could not mkdir jail path");
+    ABORT_IF_ERR(chown(_jailPath, uid, gid), "Could not chown jail path");
+    ABORT_IF_ERR(chmod(_jailPath, rwX), "Could not chmod jail path");
+    ABORT_IF_ERR(chown(_passwdFile, uid, gid), "Could not chown passwd");
+    ABORT_IF_ERR(chmod(_passwdFile, RWx), "Could not chmod passwd");
+    ABORT_IF_ERR(chown(_counterFile, uid, gid), "Could not chown counter file");
+    ABORT_IF_ERR(chmod(_counterFile, RWx), "Could not chmod counter file");
 }

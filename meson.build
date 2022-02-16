@@ -1,6 +1,6 @@
 project('capd', 'c',
   version : files('VERSION'),
-  default_options : ['c_std=c2x', 'warning_level=3'])
+  default_options : ['werror=true', 'c_std=c2x', 'warning_level=3'])
 
 
 cc = meson.get_compiler('c')

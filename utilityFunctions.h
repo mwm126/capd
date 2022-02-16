@@ -11,6 +11,12 @@
 void fatal(const char *msg);
 void logOutput(FILE *f, int l, const char *fmt, ...);
 
+#define ABORT_IF_ERR(funccall, msg)                                                                                    \
+    if (funccall)                                                                                                      \
+    {                                                                                                                  \
+        fatal(msg);                                                                                                    \
+    }
+
 /**********************************************************/
 /*           Search CAPD Password File Function           */
 /**********************************************************/

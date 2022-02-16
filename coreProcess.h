@@ -11,4 +11,5 @@
 /******************************************************/
 
 void coreProcess(int coreToNetSocket, int coreToAuthSocket);
+
 #endif

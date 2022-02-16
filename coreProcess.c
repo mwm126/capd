@@ -24,7 +24,7 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
     char netBuffer[BUFFER_SIZE];
     FILE *lf, *cf, *pf;
     int serial, destPort, timeout, i, loginAddr = -1;
-    char username[32], destSystem[32];
+    char username[32], destSystem[addrSize];
     u8 remoteAddr[addrSize], serverAddr[MAX_NO_OF_SERVER_ADDR][addrSize] = {{0x00}};
     u8 AES128Key[16], AES256Key[32], HMACKey[20];
     packet = (packet_t *)netBuffer;
@@ -45,20 +45,14 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
         strcpy(processJailPath, jailPath());
         strcat(processJailPath, "/core");
         mkdir(processJailPath, rwX);
-        chown(processJailPath, 0, 0);
-        chmod(processJailPath, rwX);
-        chdir(processJailPath);
-        chroot(processJailPath);
-        if (setgid(gid()))
-        {
-            fatal("Error in setgid()");
-        };
-        if (setuid(uid()))
-        {
-            fatal("Error in setuid()");
-        };
-        if ((getgid() != gid()) || (getuid() != uid()))
-            fatal("SERVER HALT - Privilege not dropped in Core process.");
+        ABORT_IF_ERR(chown(processJailPath, 0, 0), "Core process could not chown jail path");
+        ABORT_IF_ERR(chmod(processJailPath, rwX), "Core process could not chmod jail path");
+        ABORT_IF_ERR(chdir(processJailPath), "Core process could not chdir jail path");
+        ABORT_IF_ERR(chroot(processJailPath), "Core process could not chroot jail path");
+        ABORT_IF_ERR(setgid(gid()), "Error in setgid()");
+        ABORT_IF_ERR(setuid(uid()), "Error in setuid()");
+        ABORT_IF_ERR((getgid() != gid()) || (getuid() != uid()),
+                     "SERVER HALT - Privilege not dropped in Core process.");
     }
 
     if (noOfServerAddresses() == 0)
@@ -242,23 +236,22 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
 
         {
             /* Translate connIPbinary to IP as text */
-            char connAddrTxt[addrTxtSize] = {0x00};
+
+            authmessage_t msg = {.destPort = destPort, .timeout = timeout, .loginAddrIndex = loginAddr};
             u8 allZeros[12] = {0x00};
             if (memcmp(plain->connAddr, allZeros, 12) == 0) /* IPV4 */
             {
                 u8 ipv4[4];
                 memcpy(ipv4, plain->connAddr + 12, 4);
-                inet_ntop(AF_INET, ipv4, connAddrTxt, INET_ADDRSTRLEN);
+                inet_ntop(AF_INET, ipv4, msg.connAddrTxt, INET_ADDRSTRLEN);
             }
             else /* IPV6 */
-                inet_ntop(AF_INET6, plain->connAddr, connAddrTxt, INET6_ADDRSTRLEN);
+                inet_ntop(AF_INET6, plain->connAddr, msg.connAddrTxt, INET6_ADDRSTRLEN);
+
+            memcpy(msg.destSystem, destSystem, sizeof(destSystem));
 
             /* Authorize connection */
-            write(coreToAuthSocket, connAddrTxt, addrTxtSize);
-            write(coreToAuthSocket, destSystem, sizeof(destSystem));
-            write(coreToAuthSocket, &destPort, sizeof(destPort));
-            write(coreToAuthSocket, &timeout, sizeof(timeout));
-            write(coreToAuthSocket, &loginAddr, sizeof(loginAddr));
+            ABORT_IF_ERR(write(coreToAuthSocket, &msg, sizeof(msg)), "Unable to send auth message to core process");
         }
     }
     return;

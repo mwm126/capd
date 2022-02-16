@@ -8,6 +8,7 @@
 /*********************************************/
 
 #define MAX_NO_OF_COUNTER_ENTRIES MAX_NO_OF_CONNECTIONS
+
 int searchCounterFile(FILE *f, int serial);
 
 void updateCounterFileEntry(FILE *f, int serial, int counter);

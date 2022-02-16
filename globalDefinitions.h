@@ -39,11 +39,10 @@ typedef uint64_t u64;
 /* Static sizes */
 #define BUFFER_SIZE 1024
 #define MAX_NO_OF_CONNECTIONS 2000
-#define addrSize 16
+#define addrSize INET6_ADDRSTRLEN
 #define OTPSize 16
 #define chksumSize SHA256_DIGEST_LENGTH
 #define MACSize SHA256_DIGEST_LENGTH
-#define addrTxtSize INET6_ADDRSTRLEN
 #define MAX_NO_OF_SERVER_ADDR 10
 
 /* File permission macros */
@@ -85,7 +84,23 @@ typedef struct
     u16 crc;
 } OTP_t;
 
+typedef struct
+{
+    u8 remoteAddr[16];
+    u8 udpBuffer[BUFFER_SIZE];
+} netmessage_t;
+
+typedef struct
+{
+    char connAddrTxt[addrSize];
+    char destSystem[addrSize];
+    int destPort;
+    int timeout;
+    int loginAddrIndex;
+} authmessage_t;
+
 void init_usage(int argc, char *argv[]);
+void setup_security();
 
 char *capdVersion(void);
 char *passwdFile(void);

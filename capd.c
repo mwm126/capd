@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 
     /* Parse commandline inputs */
     init_usage(argc, argv);
+    setup_security(0, 0);
 
     /* Fork into processes and establish sockets connections */
     {
