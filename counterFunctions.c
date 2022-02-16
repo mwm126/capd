@@ -1,5 +1,7 @@
 #include "counterFunctions.h"
 
+#include "utilityFunctions.h"
+
 /*********************************************/
 /*       Counter Manangement Functions       */
 /*********************************************/
@@ -37,7 +39,7 @@ void updateCounterFileEntry(FILE *f, int serial, int counter)
         n++;
     }
     rewind(f);
-    ftruncate(fileno(f), 0);
+    ABORT_IF_ERR(ftruncate(fileno(f), 0), "unable to truncate counter file");
     for (i = 0; i < n; i++)
         fprintf(f, "%d %d\n", serialList[i], counterList[i]);
     if (!found)

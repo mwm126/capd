@@ -12,7 +12,7 @@ void tearDown(void)
 void test_build_command_line(void)
 {
     char commandLine[MAX_PATH + 150];
-    char allowedAddr[addrTxtSize] = "192.168.10.200";
+    char allowedAddr[addrSize] = "192.168.10.200";
     char hostAddr[32] = "99.8.77.66";
     char destAddr[32] = "44.33.22.11";
     int destPort = 54321;

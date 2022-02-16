@@ -11,26 +11,27 @@
 
 void authProcess(int authToCoreSocket, int netPID, int corePID)
 {
-    char commandLine[MAX_PATH + 150];
     char hostAddr[32];
-    char allowedAddr[addrTxtSize];
-    int port, timeLimit, loginAddr;
+    char allowedAddr[addrSize];
 
     /* This process retains privilege and is unjailed. */
     while (1)
     {
+        authmessage_t msg;
+
         /* Wait for authorization information */
-        if ((read(authToCoreSocket, allowedAddr, sizeof(allowedAddr)) != sizeof(allowedAddr)) ||
-            (read(authToCoreSocket, hostAddr, sizeof(hostAddr)) != sizeof(hostAddr)) ||
-            (read(authToCoreSocket, &port, sizeof(port)) != sizeof(port)) ||
-            (read(authToCoreSocket, &timeLimit, sizeof(timeLimit)) != sizeof(timeLimit)) ||
-            (read(authToCoreSocket, &loginAddr, sizeof(loginAddr)) != sizeof(loginAddr)))
+        if ((read(authToCoreSocket, &msg, sizeof(msg)) != sizeof(allowedAddr)))
         /* Kill all capd processes if wrong-sized message arrives. */
         {
             kill(netPID, SIGKILL);
             kill(corePID, SIGKILL);
             fatal("CRITICAL FAULT - Wrong-sized message received from Auth Process!");
         }
+        memcpy(allowedAddr, msg.connAddrTxt, sizeof(allowedAddr));
+        memcpy(hostAddr, msg.destSystem, sizeof(hostAddr));
+        int port = msg.destPort;
+        int timeLimit = msg.timeout;
+        int loginAddr = msg.loginAddrIndex;
 
         /* Sanitize allowedAddr and hostAddr to prevent script hijacking */
         for (size_t i = 0; i < sizeof(allowedAddr); i++)
@@ -57,16 +58,17 @@ void authProcess(int authToCoreSocket, int netPID, int corePID)
         timeLimit = BOUND(timeLimit, 0, 300);
         port = BOUND(port, 0, 65535);
 
+        char commandLine[MAX_PATH + 150];
         build_command_line(commandLine, allowedAddr, hostAddr, timeLimit, serverAddress(loginAddr), port);
 
         /* Execute openSSH.sh command */
-        system(commandLine);
-        //	printf("%s\n",commandLine);
+        printf("%s\n", commandLine);
+        ABORT_IF_ERR(system(commandLine), "Could not run system command");
     }
     return;
 }
 
-void build_command_line(char commandLine[], char allowedAddr[addrTxtSize], char hostAddr[32], int timeLimit,
+void build_command_line(char commandLine[], char allowedAddr[addrSize], char hostAddr[32], int timeLimit,
                         char destAddr[32], int destPort)
 {
     char tmp[15];

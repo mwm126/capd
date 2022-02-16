@@ -3,6 +3,7 @@
 /*************************************************************/
 
 #include "netProcess.h"
+#include <string.h>
 
 /************************************************************/
 /*    Derives shared keys from seed and simple algorithm    */
@@ -84,20 +85,13 @@ void netProcess(int netToCoreSocket)
         strcpy(processJailPath, jailPath());
         strcat(processJailPath, "/net");
         mkdir(processJailPath, rwX);
-        chown(processJailPath, 0, 0);
-        chmod(processJailPath, rwX);
-        chdir(processJailPath);
-        chroot(processJailPath);
-        if (setgid(gid()))
-        {
-            fatal("Error in setgid()");
-        };
-        if (setuid(uid()))
-        {
-            fatal("Error in setuid()");
-        };
-        if ((getgid() != gid()) || (getuid() != uid()))
-            fatal("SERVER HALT - Privilege not dropped in Net process.");
+        ABORT_IF_ERR(chown(processJailPath, 0, 0), "Net process could not chown jail path");
+        ABORT_IF_ERR(chmod(processJailPath, rwX), "Net process could not chmod jail path");
+        ABORT_IF_ERR(chdir(processJailPath), "Net process could not chdir jail path");
+        ABORT_IF_ERR(chroot(processJailPath), "Net process could not chroot jail path");
+        ABORT_IF_ERR(setgid(gid()), "Error in setgid()");
+        ABORT_IF_ERR(setuid(uid()), "Error in setuid()");
+        ABORT_IF_ERR((getgid() != gid()) || (getuid() != uid()), "SERVER HALT - Privilege not dropped in Net process.");
     }
 
     memset(udpBuffer, 0, BUFFER_SIZE);
@@ -130,10 +124,13 @@ void netProcess(int netToCoreSocket)
 
         /* Ship out packet to core process */
         {
-            u8 remoteAddr[16] = {0x00};
-            memcpy(remoteAddr + 12, &(((struct sockaddr_in *)(&siRemote))->sin_addr), 4);
-            write(netToCoreSocket, remoteAddr, sizeof(remoteAddr));
-            write(netToCoreSocket, udpBuffer, sizeof(packet_t));
+            netmessage_t msg;
+            memset(msg.remoteAddr, 0, sizeof(msg.remoteAddr));
+            memcpy(msg.remoteAddr + 12, &(((struct sockaddr_in *)(&siRemote))->sin_addr), 4);
+            memcpy(msg.udpBuffer, udpBuffer, sizeof(udpBuffer));
+
+            ABORT_IF_ERR(write(netToCoreSocket, &msg, sizeof(msg)),
+                         "Error sending net process message to core process");
         }
     }
     return;
