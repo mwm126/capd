@@ -157,7 +157,11 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
             logOutput(lf, 2, "     Packet Value   : %s", str);
             arrayToHexString(plain->authAddr, str, 16);
             logOutput(lf, 2, "     Decrypted Value: %s", str);
-            continue;
+            if (!ignore_pkt_ip())
+            {
+                continue;
+            }
+            logOutput(lf, 2, "Ignoring Packet Mismatch...", str);
         }
 
         /* Verify username */

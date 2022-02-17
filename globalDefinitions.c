@@ -19,6 +19,7 @@ u32 _spoofTimeout = 30; /* Maximum time allowed to open spoofed ssh connection *
 char _user[32] = "capd";
 uid_t _uid, _gid;
 int _port = 62201;
+bool _ignore_pkt_ip = false;
 int _verbosity = 1;
 
 char *capdVersion()
@@ -94,6 +95,11 @@ int capPort()
     return _port;
 }
 
+bool ignore_pkt_ip()
+{
+    return _ignore_pkt_ip;
+}
+
 int verbosity()
 {
     return _verbosity;
@@ -119,6 +125,7 @@ void init_usage(int argc, char *argv[])
             printf("  -s,  --script [fully resolved path to firewall script]\n");
             printf("  -p,  --port [UDP port]\n");
             printf("  -a,  --address [Server interface IP address]\n");
+            printf("  -i,  --ignore-pkt-ip [Ignore CAP packet IP address mismatch]\n");
             printf("  -v,  --verbosity [verbosity level]\n\n");
             exit(0);
         }
@@ -142,9 +149,13 @@ void init_usage(int argc, char *argv[])
             strcpy(_openSSHPath, argv[++i]);
         if ((strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "--port") == 0))
             _port = atoi(argv[++i]);
+
         if (((strcmp(argv[i], "-a") == 0) || (strcmp(argv[i], "--address") == 0)) &&
             (noOfServerAddresses() < MAX_NO_OF_SERVER_ADDR - 1))
             strcpy(_serverAddress[_noOfServerAddresses++], argv[++i]);
+
+        if (((strcmp(argv[i], "-i") == 0) || (strcmp(argv[i], "--ignore-pkt-in") == 0)))
+            _ignore_pkt_ip = true;
         if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "--verbosity") == 0))
             _verbosity = atoi(argv[++i]);
         _verbosity = BOUND(_verbosity, 0, 2);

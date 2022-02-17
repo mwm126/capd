@@ -10,6 +10,7 @@
 #include <pwd.h>
 #include <signal.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -101,6 +102,7 @@ char *user(void);
 uid_t uid(void);
 uid_t gid(void);
 int capPort(void);
+bool ignore_pkt_ip();
 int verbosity(void);
 
 #endif

@@ -28,16 +28,17 @@ void test_init_usage_defaults(void)
     TEST_ASSERT_EQUAL_INT(30, spoofTimeout());
     TEST_ASSERT_EQUAL_STRING("/usr/sbin/openClose.sh", openSSHPath());
     TEST_ASSERT_EQUAL_STRING(CAPD_TEST_USER, user());
+    TEST_ASSERT(!ignore_pkt_ip());
     TEST_ASSERT_EQUAL_INT(62201, capPort());
 }
 
 void test_init_usage_cmdline(void)
 {
-    const int argc = 21;
+    const int argc = 22;
     char *argv[] = {
         "/usr/local/bin/capd", "-pw", "capd.pwd", "-c", "capd.counter", "-l", "capd.log", "-v",  "2",   "-u",
         CAPD_TEST_USER,        "-q",  "777",      "-p", "999",          "-t", "456",      "-dt", "123", "-s",
-        "/open/close.sh"};
+        "/open/close.sh",      "-i"};
 
     init_usage(argc, argv);
 
@@ -51,6 +52,7 @@ void test_init_usage_cmdline(void)
     TEST_ASSERT_EQUAL_INT(777, spoofTimeout());
     TEST_ASSERT_EQUAL_STRING("/open/close.sh", openSSHPath());
     TEST_ASSERT_EQUAL_STRING(CAPD_TEST_USER, user());
+    TEST_ASSERT(ignore_pkt_ip());
     TEST_ASSERT_EQUAL_INT(999, capPort());
 }
 
