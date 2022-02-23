@@ -239,14 +239,14 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
 
             authmessage_t msg = {.destPort = destPort, .timeout = timeout, .loginAddrIndex = loginAddr};
             u8 allZeros[12] = {0x00};
-            if (memcmp(plain->connAddr, allZeros, 12) == 0) /* IPV4 */
+            if (memcmp(remoteAddr, allZeros, 12) == 0) /* IPV4 */
             {
                 u8 ipv4[4];
-                memcpy(ipv4, plain->connAddr + 12, 4);
+                memcpy(ipv4, remoteAddr + 12, 4);
                 inet_ntop(AF_INET, ipv4, msg.connAddrTxt, INET_ADDRSTRLEN);
             }
             else /* IPV6 */
-                inet_ntop(AF_INET6, plain->connAddr, msg.connAddrTxt, INET6_ADDRSTRLEN);
+                inet_ntop(AF_INET6, remoteAddr, msg.connAddrTxt, INET6_ADDRSTRLEN);
 
             memcpy(msg.destSystem, destSystem, sizeof(destSystem));
 
