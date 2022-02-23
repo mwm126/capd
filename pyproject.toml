@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "capd"
+version = "22.2.23"
+description = "mfa_program tool for programming Yubikey"
+authors = [
+  "Mark Meredith <mark.meredith@netl.doe.gov>",
+  "Michael Prinkey <mprinkey@gmail.com>",
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pyOpenSSL = "^22.0.0"
+
+[tool.poetry.dev-dependencies]
+black = "^22.1.0"
+mypy = "^0.931"
+pylint = "^2.12.2"
+types-pyOpenSSL = "^22.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
