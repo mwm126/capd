@@ -26,6 +26,7 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
     int serial, destPort, timeout, i, loginAddr = -1;
     char username[32], destSystem[addrSize];
     u8 remoteAddr[addrSize], serverAddr[MAX_NO_OF_SERVER_ADDR][addrSize] = {{0x00}};
+    u8 connAddr[addrSize];
     u8 AES128Key[16], AES256Key[32], HMACKey[20];
     packet = (packet_t *)netBuffer;
 
@@ -143,6 +144,9 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
                 continue;
             }
         }
+
+        // Default (legacy) behavior initialize connAddr to connAddr in packet
+        memcpy(connAddr, plain->connAddr, sizeof(plain->connAddr));
         if (memcmp(plain->authAddr, remoteAddr, addrSize) != 0)
         {
             char str[33];
@@ -156,6 +160,8 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
                 continue;
             }
             logOutput(lf, 2, "Ignoring Packet Mismatch...", str);
+            //  Instead of connAddr in packet, set connAddr to address where packet came from
+            memcpy(connAddr, remoteAddr, sizeof(remoteAddr));
         }
 
         /* Verify username */
@@ -228,25 +234,25 @@ void coreProcess(int coreToNetSocket, int coreToAuthSocket)
                       serverAddress(loginAddr));
         }
 
-        /* Setup timeout */
-        if (memcmp(plain->connAddr, plain->authAddr, addrSize) == 0)
-            timeout = initTimeout();
-        else
-            timeout = spoofTimeout();
+        /* /\* Setup timeout *\/ */
+        /* if (memcmp(plain->connAddr, plain->authAddr, addrSize) == 0) */
+        timeout = initTimeout();
+        /* else */
+        /*     timeout = spoofTimeout(); */
 
         {
             /* Translate connIPbinary to IP as text */
 
             authmessage_t msg = {.destPort = destPort, .timeout = timeout, .loginAddrIndex = loginAddr};
             u8 allZeros[12] = {0x00};
-            if (memcmp(remoteAddr, allZeros, 12) == 0) /* IPV4 */
+            if (memcmp(connAddr, allZeros, 12) == 0) /* IPV4 */
             {
                 u8 ipv4[4];
-                memcpy(ipv4, remoteAddr + 12, 4);
+                memcpy(ipv4, connAddr + 12, 4);
                 inet_ntop(AF_INET, ipv4, msg.connAddrTxt, INET_ADDRSTRLEN);
             }
             else /* IPV6 */
-                inet_ntop(AF_INET6, remoteAddr, msg.connAddrTxt, INET6_ADDRSTRLEN);
+                inet_ntop(AF_INET6, connAddr, msg.connAddrTxt, INET6_ADDRSTRLEN);
 
             memcpy(msg.destSystem, destSystem, sizeof(destSystem));
 
