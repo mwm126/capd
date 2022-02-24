@@ -9,15 +9,13 @@ import subprocess
 import sys
 import time
 
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import Tuple
 
 from OpenSSL import crypto
 
-# Global Variables
-storagePath = Path(".")
-
-# secrets
+# Global Variables (secrets)
 hashIDSalt = "4FEGy8Vb2ih8fRZow2qK2QE32BYe0ZffTtEmj1QI0sJ5l7HOMPcm4G+F"
 hmacGenerator = base64.b64decode("02VDv98CjuUVnjDOv1ySVB+YbEFISOUUW6Lgc2UGCjuSQJHzRhMLfKP3vFkMikSp")
 otpGenerator = base64.b64decode("EdnkfUYMK8yl1XxJPibr60g6laGvpk7tBPVMCCyxpam5dQyziBx7K5DdraA2c6KC")
@@ -30,20 +28,100 @@ MGMKEY = "e1a055640fd1b0ef5eb5b9dfd5c867d3e035bf2885ca5276"
 def main(args: list[str]):
     print("\nMFA4 SciLAN/HPC Programmer\n")
 
-    if len(args) == 2 and args[1] == "-c":
-        create_key_pair()
+    parser = get_parser()
+    ns = parser.parse_args(args)
+
+    if ns.command:
+        ns.func(ns)
     else:
-        program_user_key()
+        parser.print_help()
 
 
-def create_key_pair():
+def get_parser() -> ArgumentParser:
+    parser = ArgumentParser(description="CAP Client")
+    parser.set_defaults(func=parser.print_usage)
+
+    subpar = parser.add_subparsers(dest="command")
+
+    ca = subpar.add_parser("ca", help="Create Certificate Authority (CA) key pair")
+    ca.set_defaults(func=create_key_pair)
+
+    yk = subpar.add_parser("yk", help="Program Yubikey with CA key pair")
+    yk.set_defaults(func=program_user_key)
+
+    ca.add_argument(
+        "-p",
+        "--private",
+        metavar="<private key>",
+        action="store",
+        default="CAPrivateKey.pem",
+        help="Path to CA private key",
+    )
+    ca.add_argument(
+        "-t",
+        "--cert",
+        metavar="<certificate>",
+        action="store",
+        default="CACertificate.pem",
+        help="Path to CA certificate",
+    )
+
+    yk.add_argument(
+        "-u",
+        "--username",
+        metavar="<username>",
+        action="store",
+        default="",
+        help="Username for key to program",
+    )
+    yk.add_argument(
+        "-l",
+        "--log",
+        action="store",
+        default="mfaKey.log",
+        help="Path to log file",
+    )
+    yk.add_argument(
+        "-p",
+        "--private",
+        metavar="<private key>",
+        action="store",
+        default="CAPrivateKey.pem",
+        help="Path to CA private key",
+    )
+    yk.add_argument(
+        "-t",
+        "--cert",
+        metavar="<certificate>",
+        action="store",
+        default="CACertificate.pem",
+        help="Path to CA certificate",
+    )
+    yk.add_argument(
+        "-o",
+        "--once",
+        action="store_true",
+        help="Only program one user key",
+    )
+
+    return parser
+
+
+def create_key_pair(ns: Namespace):
     """Handle Key Pair Creation"""
+    cert_p = Path(ns.cert)
+    privkey_p = Path(ns.private)
     print("Preparing to create a new Certificate Authority key pair.")
-    print(f"This will overwrite any existing keys in {storagePath}.")
-    yOrN = input("Do you want to continue? ")
-    if yOrN.lower() not in ["y", "yes"]:
-        print("\nNo file changes made.  Exiting.\n")
-        return
+    if cert_p.exists():
+        yn = input(f"Certificate already exists at {cert_p}.  Overwrite?")
+        if yn.lower() not in ["y", "yes"]:
+            print("\nExiting.\n")
+            return
+    if privkey_p.exists():
+        yn = input(f"Private key already exists at {privkey_p}.  Overwrite?")
+        if yn.lower() not in ["y", "yes"]:
+            print("\nExiting.\n")
+            return
     print("\nCreating RSA4096 key pair for Certificate Authority.")
     CAKeyPair = crypto.PKey()
     CAKeyPair.generate_key(crypto.TYPE_RSA, 4096)
@@ -74,18 +152,16 @@ def create_key_pair():
     store_ctx = crypto.X509StoreContext(store, CACert)
     try:
         store_ctx.verify_certificate()
-    except ValueError:
+    except crypto.X509StoreContextError:
         print("CA Certificate verification failure.  Exiting.")
         sys.exit()
     print("CA Certificate verification completed.")
 
-    ca_cert_pem = storagePath / "CACertificate.pem"
-    print(f"\nWriting CA Certificate to {ca_cert_pem}.")
-    with open(ca_cert_pem, "wb") as CACertFile:
+    print(f"\nWriting CA Certificate to {cert_p}.")
+    with open(cert_p, "wb") as CACertFile:
         CACertFile.write(crypto.dump_certificate(crypto.FILETYPE_PEM, CACert))
 
-    ca_priv_pem = storagePath / "CAPrivateKey.pem"
-    print(f"Writing Encrypted CA Private Key to {ca_priv_pem}.")
+    print(f"Writing Encrypted CA Private Key to {privkey_p}.")
 
     priv_key = crypto.dump_privatekey(
         crypto.FILETYPE_PEM,
@@ -94,18 +170,18 @@ def create_key_pair():
         bytes(privatePass, "utf-8"),
     )
 
-    with open(ca_priv_pem, "wb") as CAPrivateKeyFile:
+    with open(privkey_p, "wb") as CAPrivateKeyFile:
         CAPrivateKeyFile.write(priv_key)
     print("Exiting.\n")
 
 
-def program_user_key():
+def program_user_key(ns: Namespace):
     """User Key Creation and Yubikey Programming"""
 
     # Load and decrypt CA certificate and private key
     privatePass = getpass.getpass("Enter passphrase for CA Private Key: ")
     try:
-        with open(storagePath / "CAPrivateKey.pem", "rb") as CAPrivateKeyFile:
+        with open(ns.private, "rb") as CAPrivateKeyFile:
             CAPrivateKey = crypto.load_privatekey(
                 crypto.FILETYPE_PEM,
                 CAPrivateKeyFile.read(),
@@ -118,7 +194,7 @@ def program_user_key():
         print("Exiting.")
         sys.exit()
     try:
-        with open(storagePath / "CACertificate.pem", "rb") as CACertFile:
+        with open(ns.cert, "rb") as CACertFile:
             CACert = crypto.load_certificate(crypto.FILETYPE_PEM, CACertFile.read())
     except ValueError:
         print("Error opening CA Certificate.")
@@ -222,7 +298,7 @@ def program_user_key():
         print("HMAC Secret: " + userHmac.hex())
 
         # Write out to log file
-        with open(storagePath / "mfaKey.log", "a", encoding="utf-8") as f:
+        with open(ns.log, "a", encoding="utf-8") as f:
             out = "[" + time.asctime(time.localtime(time.time())) + "]   "
             out += username + "\t"
             out += str(serial) + "   "
@@ -230,6 +306,9 @@ def program_user_key():
             f.write(out)
 
         print("Key programmed and tested for user " + username + ".  Remove key.")
+
+        if ns.once:
+            break
 
 
 def sha256(string: str) -> bytes:
@@ -292,7 +371,7 @@ def programRSASlot(
     store_ctx = crypto.X509StoreContext(store, userCert)
     try:
         store_ctx.verify_certificate()
-    except ValueError:
+    except crypto.X509StoreContextError:
         print("User Certificate verification failure.  Exiting.")
         sys.exit()
     print("User Certificate for slot " + slot + " created and verified.")
@@ -344,4 +423,4 @@ def programRSASlot(
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main(sys.argv[1:])

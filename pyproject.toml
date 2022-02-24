@@ -15,6 +15,9 @@ pyOpenSSL = "^22.0.0"
 black = "^22.1.0"
 mypy = "^0.931"
 pylint = "^2.12.2"
+pytest = "^7.0.1"
+pytest-cov = "^3.0.0"
+pytest-mypy = "^0.9.1"
 types-pyOpenSSL = "^22.0.0"
 
 [build-system]
@@ -42,6 +45,7 @@ disable = [
     "invalid-name",
     "missing-docstring",
     "too-many-arguments",
+    "too-many-branches",
     "too-many-locals",
     "too-many-statements",
 ]
