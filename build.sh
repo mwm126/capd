@@ -1,3 +1,4 @@
 #!/bin/bash
 
-gcc -std=gnu99 -Wall -lrt -O3 -o capd *.c -lcrypto -DCAPD_VERSION=$(cat VERSION)
+gcc -o capd src/*.c \
+    -lcrypto -lrt -std=c2x -Wall -O3 -D_DEFAULT_SOURCE -DCAPD_VERSION=$(cat VERSION)

@@ -2,30 +2,18 @@ project('capd', 'c',
   version : files('VERSION'),
   default_options : ['werror=true', 'c_std=c2x', 'warning_level=3'])
 
-
 cc = meson.get_compiler('c')
 cryptolib = cc.find_library('crypto')
 
-incdir = include_directories('.')
-proc_srcs = files(
-  'authProcess.c',
-  'coreProcess.c',
-  'counterFunctions.c',
-  'cryptoFunctions.c',
-  'globalDefinitions.c',
-  'netProcess.c',
-  'replayFunctions.c',
-  'utilityFunctions.c',
-)
+subdir('src')
+subdir('test')
 
 executable('capd',
-           'capd.c',
-           proc_srcs,
+           main_src,
            dependencies: cryptolib,
+           link_with: capd_lib,
            c_args: [
              '-D_DEFAULT_SOURCE',
              '-DCAPD_VERSION='+meson.project_version()
            ],
            install : true)
-
-subdir('test')
