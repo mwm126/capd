@@ -1,5 +1,6 @@
 incdir = include_directories('.')
 capd_lib = static_library(
+  'capd',
   'authProcess.c',
   'coreProcess.c',
   'counterFunctions.c',
@@ -8,7 +9,12 @@ capd_lib = static_library(
   'netProcess.c',
   'replayFunctions.c',
   'utilityFunctions.c',
-  gnu_symbol_visibility:'default',
+  dependencies: cryptolib,
+  c_args: [
+    '-D_DEFAULT_SOURCE',
+    '-DCAPD_VERSION='+meson.project_version()
+  ],
 )
+
 
 main_src = files('capd.c')
