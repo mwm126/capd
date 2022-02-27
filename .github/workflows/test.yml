@@ -30,4 +30,4 @@ jobs:
       run: poetry run python -m pytest --mypy pytest mfa_program.py
 
     - name: mfa_program Lint
-      run: poetry run python -m pylint
+      run: poetry run pylint
