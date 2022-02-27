@@ -1,4 +1,5 @@
-project('capd', 'c',
+project(
+  'capd', 'c',
   version : files('VERSION'),
   default_options : ['werror=true', 'c_std=c2x', 'warning_level=3'])
 
@@ -8,12 +9,10 @@ cryptolib = cc.find_library('crypto')
 subdir('src')
 subdir('test')
 
-executable('capd',
-           main_src,
-           dependencies: cryptolib,
-           link_with: capd_lib,
-           c_args: [
-             '-D_DEFAULT_SOURCE',
-             '-DCAPD_VERSION='+meson.project_version()
-           ],
-           install : true)
+executable(
+  'capd',
+  main_src,
+  dependencies: cryptolib,
+  link_with: capd_lib,
+  install : true
+)
