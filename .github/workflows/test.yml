@@ -1,6 +1,6 @@
 name: C CI
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -11,14 +11,23 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
 
-    - name: Install Meson
-      run: pip install --no-cache-dir meson==0.61.1 ninja==1.10.2.3
+    - name: Install Poetry
+      run: pip install --no-cache-dir poetry==1.1.13
+
+    - name: Install Poetry environment
+      run: poetry install
 
     - name: Configure
-      run: meson build
+      run: poetry run meson build
 
     - name: Build
-      run: meson compile -C build
+      run: poetry run meson compile -C build
 
-    - name: Test
-      run: meson test -C build
+    - name: capd Tests
+      run: poetry run meson test -C build
+
+    - name: mfa_program Tests
+      run: poetry python -m pytest --mypy
+
+    - name: mfa_program Lint
+      run: poetry python -m pylint

@@ -1,5 +1,8 @@
+import os
 from pathlib import Path
 from unittest.mock import patch
+
+import pytest
 
 import mfa_program
 
@@ -81,6 +84,10 @@ def test_make_cert_custom(mock_getpass, mock_input, tmpdir):
     assert key.exists()
 
 
+YK_PRESENT = bool(os.system("ykinfo -s"))
+
+
+@pytest.mark.skipif(YK_PRESENT, reason="Test requires Yubikey [which will be wiped]")
 @patch("mfa_program.input")
 @patch("mfa_program.getpass")
 def test_program_yubikey(mock_getpass, mock_input, tmpdir):
