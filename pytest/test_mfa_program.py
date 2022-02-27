@@ -22,7 +22,7 @@ def test_make_cert_default(mock_getpass, mock_input, tmpdir):
     assert not default_cert.exists()
     assert not default_key.exists()
 
-    with tmpdir.as_cwd() as cwd:
+    with tmpdir.as_cwd() as _:
         mfa_program.main(["ca"])
 
     assert default_cert.exists()
@@ -41,7 +41,7 @@ def test_make_cert_cancel(mock_getpass, mock_input, tmpdir):
     assert not default_cert.stat().st_size
     assert not default_key.stat().st_size
 
-    with tmpdir.as_cwd() as cwd:
+    with tmpdir.as_cwd() as _:
         mfa_program.main(["ca"])
 
     assert not default_cert.stat().st_size
@@ -60,7 +60,7 @@ def test_make_cert_overwrite(mock_getpass, mock_input, tmpdir):
     assert not default_cert.stat().st_size
     assert not default_key.stat().st_size
 
-    with tmpdir.as_cwd() as cwd:
+    with tmpdir.as_cwd() as _:
         mfa_program.main(["ca"])
 
     assert default_cert.stat().st_size
@@ -77,7 +77,7 @@ def test_make_cert_custom(mock_getpass, mock_input, tmpdir):
     assert not cert.exists()
     assert not key.exists()
 
-    with tmpdir.as_cwd() as cwd:
+    with tmpdir.as_cwd() as _:
         mfa_program.main(["ca", "-t", "my_ca.pem", "-p", "my_key.pem"])
 
     assert cert.exists()
@@ -99,7 +99,7 @@ def test_program_yubikey(mock_getpass, mock_input, tmpdir):
     assert not cert.exists()
     assert not key.exists()
 
-    with tmpdir.as_cwd() as cwd:
+    with tmpdir.as_cwd() as _:
         mfa_program.main(["ca"])
         assert cert.exists()
         assert key.exists()
