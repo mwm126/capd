@@ -27,7 +27,7 @@ jobs:
       run: poetry run meson test -C build
 
     - name: mfa_program Tests
-      run: poetry python -m pytest --mypy
+      run: poetry python3 -m pytest --mypy
 
     - name: mfa_program Lint
-      run: poetry python -m pylint
+      run: poetry python3 -m pylint
