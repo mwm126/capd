@@ -13,6 +13,7 @@ TAG=$(cat "$PKG_DIR"/../VERSION)
 
 SRC_TAR=build/meson-dist/capd-${TAG}.tar.xz
 
+rm -rf ${build_src}
 meson ${build_src}
 meson dist -C ${build_src}
 
@@ -22,7 +23,7 @@ cd "$PKG_DIR"/..
 docker build -f "$PKG_DIR"/Dockerfile-deb -t ${BUILD_IMG} --build-arg SRC_TAR=${SRC_TAR} .
 
 # Copy .deb to dist/
-docker run --rm -v "$PWD"/dist:/dist ${BUILD_IMG} /bin/sh -c "cp ${CAPD_DEB} /dist"
+docker run --rm -v "$PWD":/host --user "$( id -u ):$( id -g )" ${BUILD_IMG} /bin/sh -c "cp /${CAPD_DEB} /host"
 
 # Test
-docker run --rm -v "$PWD"/dist:/dist ubuntu:18.04 /bin/sh -c "dpkg -i /dist/${CAPD_DEB}; dpkg -L capd"
+docker run --rm -v "$PWD":/host ubuntu:18.04 /bin/sh -c "dpkg -i /host/${CAPD_DEB}; dpkg -L capd"

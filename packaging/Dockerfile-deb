@@ -21,10 +21,12 @@ WORKDIR /root
 ADD ${SRC_TAR} ./
 
 ARG BUILDDIR=builddeb
+ARG INSTDIR=/capd_inst
 
 RUN meson ${BUILDDIR} -Dc_std=c11 \
     && meson compile -C ${BUILDDIR} \
-    && meson install -C ${BUILDDIR} --destdir $PWD/capd_inst \
-    && dpkg-deb --build capd_inst
+    && meson install -C ${BUILDDIR} --destdir ${INSTDIR} \
+    && cp -r packaging/DEBIAN/ ${INSTDIR}/ \
+    && dpkg-deb --build ${INSTDIR}
 
 CMD [ "/bin/bash" ]
