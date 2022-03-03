@@ -1,0 +1,30 @@
+FROM ubuntu:18.04
+
+LABEL maintainer="Mark Meredith <mark.meredith@netl.doe.gov>"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get -qq update \
+    && apt-get -qq -y install --no-install-recommends \
+    build-essential=12.4ubuntu1 \
+    libssl-dev=1.* \
+    pkg-config=0.29.* \
+    python3-pip=9.* \
+    python3-venv=3.6.* \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* \
+    && pip3 install --no-cache-dir \
+    meson==0.* \
+    ninja==1.*
+
+WORKDIR /root
+
+ADD ${SRC_TAR} ./
+
+ARG BUILDDIR=builddeb
+
+RUN meson ${BUILDDIR} -Dc_std=c11 \
+    && meson compile -C ${BUILDDIR} \
+    && meson install -C ${BUILDDIR} --destdir $PWD/capd_inst \
+    && dpkg-deb --build capd_inst
+
+CMD [ "/bin/bash" ]
