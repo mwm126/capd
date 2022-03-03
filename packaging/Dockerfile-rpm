@@ -4,24 +4,19 @@ LABEL maintainer="Mark Meredith <mark.meredith@netl.doe.gov>"
 
 RUN yum -y update \
     && yum install -y \
+    gcc \
     meson \
+    openssl-devel \
     rpm-build \
-    rpm-devel \
-    rpmdevtools \
     rpmlint \
     && yum clean all
 
 WORKDIR /root
 
-COPY RPM RPM/
-COPY VERSION ./
-COPY meson.build ./
-COPY openClose.sh ./
-COPY src/ src/
-COPY subprojects/ subprojects/
-COPY test/ test/
+RUN mkdir -p rpmbuild/SOURCES
+COPY build-src/meson-dist/capd-v22.2.17.tar.xz ./rpmbuild/SOURCES
+ADD ${SRC_TAR} ./
 
-## TODO: Build capd.rpm
-# RUN rpmbuild -ba RPM/capd.spec
+RUN env SRC_TAR="${SRC_TAR}" rpmbuild -v -ba packaging/RPM/capd.spec
 
 CMD [ "/bin/bash" ]

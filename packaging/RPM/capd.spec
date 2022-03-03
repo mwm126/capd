@@ -1,18 +1,19 @@
 Name:       capd
-Version:    22.3.3
+Version:    v22.2.17
 Release:    1
 Summary:    Most simple RPM package
 License:    GPL
 BuildRoot:  %{_tmppath}/%{name}-%{version}-build.
+Source0:    capd-v22.2.17.tar.xz
 
 %description
 Runs the capd service.
 
 %prep
-# TODO: setup sources
+%setup -q
 
 %build
-meson build -Dc_std=c11
+meson build -Dc_std=c11 --prefix=/usr
 meson compile -C build
 
 %install
