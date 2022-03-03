@@ -4,7 +4,7 @@ Release:    1
 Summary:    Most simple RPM package
 License:    GPL
 BuildRoot:  %{_tmppath}/%{name}-%{version}-build.
-Source0:    capd-v22.2.17.tar.xz
+Source0:    capd-%{version}.tar.xz
 
 %description
 Runs the capd service.

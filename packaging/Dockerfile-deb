@@ -23,7 +23,7 @@ ADD ${SRC_TAR} ./
 ARG BUILDDIR=builddeb
 ARG INSTDIR=/capd_inst
 
-RUN meson ${BUILDDIR} -Dc_std=c11 \
+RUN meson ${BUILDDIR} -Dc_std=c11 --prefix=/usr \
     && meson compile -C ${BUILDDIR} \
     && meson install -C ${BUILDDIR} --destdir ${INSTDIR} \
     && cp -r packaging/DEBIAN/ ${INSTDIR}/ \
