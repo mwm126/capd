@@ -1,0 +1,15 @@
+Source: capd
+Section: unknown
+Priority: optional
+Maintainer: Mark Meredith <mark.meredith@netl.doe.gov>
+Build-Depends: debhelper (>= 10)
+Standards-Version: 4.1.2
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: https://anonscm.debian.org/git/collab-maint/capd.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/capd.git
+
+Package: capd
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: CAP service
+ Runs the capd service.

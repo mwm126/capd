@@ -7,26 +7,31 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -qq update \
     && apt-get -qq -y install --no-install-recommends \
     build-essential=12.4ubuntu1 \
+    cdbs \
+    devscripts \
+    equivs \
+    fakeroot \
+    dh-make=2.* \
+    debhelper \
     libssl-dev=1.* \
     pkg-config=0.29.* \
     python3-pip=9.* \
-    python3-venv=3.6.* \
+    python3.8-venv=3.8.* \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
-    && pip3 install --no-cache-dir \
+    && python3.8 -m pip install --no-cache-dir \
     meson==0.* \
     ninja==1.*
 
 WORKDIR /root
 
-ADD ${SRC_TAR} ./
+ARG SRC_TAR
 
-ARG BUILDDIR=builddeb
-ARG INSTDIR=/capd_inst
+COPY ${SRC_TAR} .
+COPY debian/ ./debian/
 
-RUN meson ${BUILDDIR} -Dc_std=c11 --prefix=/usr \
-    && meson compile -C ${BUILDDIR} \
-    && meson install -C ${BUILDDIR} --destdir ${INSTDIR} \
-    && cp -r packaging/DEBIAN/ ${INSTDIR}/ \
-    && dpkg-deb --build ${INSTDIR}
+ARG PKG_NAME=capd_22.2.17
+RUN tar xf ${SRC_TAR}
+RUN mv debian/ capd-v22.2.17/
+RUN cd capd-v22.2.17; ls; dpkg-buildpackage -us -uc -b
 
 CMD [ "/bin/bash" ]
