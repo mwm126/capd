@@ -30,7 +30,7 @@ docker build \
        .
 
 # Copy .deb to host/
-docker run --rm -v "$PWD":/host --user "$( id -u ):$( id -g )" ${BUILD_IMG} /bin/sh -c "cp /${CAPD_DEB} /host"
+docker run --rm -v "$PWD":/host --user "$( id -u ):$( id -g )" ${BUILD_IMG} /bin/sh -c "cp ${CAPD_DEB} /host"
 
 # Test
-docker run --rm -v "$PWD":/host ubuntu:18.04 /bin/sh -c "dpkg -i /host/${CAPD_DEB}; dpkg -L capd"
+docker run --rm -v "$PWD":/host ubuntu:18.04 /bin/sh -c "apt update; apt install -y /host/${CAPD_DEB}; dpkg -L capd"

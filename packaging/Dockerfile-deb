@@ -12,6 +12,7 @@ RUN apt-get -qq update \
     equivs \
     fakeroot \
     dh-make=2.* \
+    dh-systemd=11.*  \
     debhelper \
     libssl-dev=1.* \
     pkg-config=0.29.* \
@@ -22,16 +23,12 @@ RUN apt-get -qq update \
     meson==0.* \
     ninja==1.*
 
-WORKDIR /root
+WORKDIR /workdir
 
 ARG SRC_TAR
-
 COPY ${SRC_TAR} .
-COPY debian/ ./debian/
 
-ARG PKG_NAME=capd_22.2.17
 RUN tar xf ${SRC_TAR}
-RUN mv debian/ capd-v22.2.17/
 RUN cd capd-v22.2.17; ls; dpkg-buildpackage -us -uc -b
 
 CMD [ "/bin/bash" ]
