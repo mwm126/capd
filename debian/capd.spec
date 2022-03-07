@@ -1,5 +1,5 @@
 Name:       capd
-Version:    v22.2.17
+Version:    v22.3.7
 Release:    1
 Summary:    Most simple RPM package
 License:    GPL
