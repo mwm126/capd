@@ -1,0 +1,25 @@
+[Unit]
+
+Description=CAP (Cloaked Access Protocol) daemon
+After=network-online.target
+
+[Service]
+
+User=capd
+
+WorkingDirectory=/usr/bin
+
+ExecStart=/usr/bin/capd
+
+Type=simple
+
+TimeoutStopSec=10
+
+Restart=on-failure
+
+RestartSec=5
+
+
+[Install]
+
+WantedBy=multi-user.target

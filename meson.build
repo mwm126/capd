@@ -16,3 +16,5 @@ executable(
   link_with: capd_lib,
   install : true
 )
+
+install_data('openClose.sh', install_dir: 'bin')

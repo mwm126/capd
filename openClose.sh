@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 # Opens/forwards connections from SRC to HOST:PORT for DELAY seconds
 # It is intended to be called by the authProcess of capd.
