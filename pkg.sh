@@ -57,22 +57,19 @@ function build_pkg() {
            --build-arg SRC_TAR="${SRC_TAR}" \
            -f "$DOCKER_DIR/Dockerfile" .
 
-    docker run --rm -v "$PWD":/host \
-           /bin/sh -c "cp ${CAPD_PKG_PATH} /host" \
-           ${DOCKER_IMG}
+    docker run --rm -v "$PWD":/host ${DOCKER_IMG} \
+           /bin/sh -c "cp ${CAPD_PKG_PATH} /host"
 }
 
 
 function test_pkg {
     if [ "$1" == "deb" ]; then
-        docker run --rm -v "$PWD":/host \
-               /bin/sh -c "apt update; apt install -y /host/${CAPD_DEB}; dpkg -L capd" \
-               ubuntu:18.04
+        docker run --rm -v "$PWD":/host ubuntu:18.04 \
+               /bin/sh -c "apt update; apt install -y /host/${CAPD_DEB}; dpkg -L capd"
 
     elif [ "$1" == "rpm" ]; then
-        docker run --rm -v "$PWD":/host \
-               /bin/sh -c "rpm -i /host/${CAPD_RPM}; rpm -ql capd" \
-               amazonlinux:2022
+        docker run --rm -v "$PWD":/host amazonlinux:2022 \
+               /bin/sh -c "rpm -i /host/${CAPD_RPM}; rpm -ql capd"
     fi
 }
 
