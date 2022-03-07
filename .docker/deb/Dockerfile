@@ -25,11 +25,13 @@ RUN apt-get -qq update \
 
 WORKDIR /workdir
 
+ARG TAG
 ARG SRC_TAR
+
 COPY ${SRC_TAR} .
 
 RUN tar xf $(basename ${SRC_TAR})
-WORKDIR /workdir/capd-v22.2.17
+WORKDIR /workdir/capd-${TAG}
 RUN dpkg-buildpackage -us -uc -b
 
 CMD [ "/bin/bash" ]

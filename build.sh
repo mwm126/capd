@@ -68,6 +68,7 @@ function build_pkg() {
     docker build \
            -t ${DOCKER_IMG} \
            --build-arg SRC_TAR="${SRC_TAR}" \
+           --build-arg TAG="${TAG}" \
            -f "$DOCKER_DIR/Dockerfile" .
 
     docker run --rm -v "$PWD":/host ${DOCKER_IMG} \

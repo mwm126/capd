@@ -12,10 +12,12 @@ RUN yum -y update \
     systemd \
     && yum clean all
 
+ARG TAG
+
 WORKDIR /root
 
 RUN mkdir -p rpmbuild/SOURCES
-COPY build-src/meson-dist/capd-v22.2.17.tar.xz ./rpmbuild/SOURCES
+COPY build-src/meson-dist/capd-${TAG}.tar.xz ./rpmbuild/SOURCES
 COPY ./ ./
 
 RUN env SRC_TAR="${SRC_TAR}" rpmbuild -v -ba debian/capd.spec
