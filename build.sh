@@ -38,7 +38,13 @@ function main() {
         DOCKER_DIR="$TOPDIR"/.docker/rpm
         CAPD_PKG_PATH="/root/rpmbuild/RPMS/x86_64/${CAPD_RPM}"
     else
-        echo "Usage: ./pkg.sh rpm      ot ./pkg.sh deb"
+        echo "Usage:"
+        echo "       ./build.sh       to build plain capd binary"
+        echo "       ./build.sh deb   to build capd-*.deb"
+        echo "       ./build.sh rpm   to build capd-*.rpm"
+        echo
+        echo "       ./build.sh deb upload  to upload DEB as Github Release artifact"
+        echo "       ./build.sh rpm upload  to upload RPM as Github Release artifact"
         exit 0
     fi
 
@@ -50,7 +56,7 @@ function main() {
         github_upload "${CAPD_PKG}"
     else
         echo
-        echo "Build successful. Run again as './pkg.sh upload' to upload assets to Github."
+        echo "Build successful. Run again with 'upload' to upload assets to Github."
     fi
 }
 
