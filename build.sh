@@ -15,7 +15,7 @@ fi
 
 VERSION=${TAG:1}
 
-GH_TITLE="CAP daemon Release ${TAG}"
+GH_TITLE="capd-${VERSION}"
 GH_NOTES="Build RPM and DPKG"
 
 build_src=build-src
@@ -25,35 +25,42 @@ export DOCKER_BUILDKIT=1
 
 
 function main() {
-    if [ "$1" == "deb" ]; then
-        CAPD_DEB=capd_${VERSION}-1_amd64.deb
-        CAPD_PKG="${CAPD_DEB}"
-        DOCKER_IMG=capd_deb_img
-        DOCKER_DIR="$TOPDIR"/.docker/deb
-        CAPD_PKG_PATH="/workdir/${CAPD_DEB}"
-    elif [ "$1" == "rpm" ]; then
-        CAPD_RPM=capd-${TAG}-1.x86_64.rpm
-        CAPD_PKG="${CAPD_RPM}"
-        DOCKER_IMG=capd_rpm_img
-        DOCKER_DIR="$TOPDIR"/.docker/rpm
-        CAPD_PKG_PATH="/root/rpmbuild/RPMS/x86_64/${CAPD_RPM}"
-    else
+    if [ "$1" != "pkg" ]; then
         echo "Usage:"
-        echo "       ./build.sh       to build plain capd binary"
-        echo "       ./build.sh deb   to build capd-*.deb"
-        echo "       ./build.sh rpm   to build capd-*.rpm"
+        echo "       ./build.sh             to build plain capd binary"
+        echo "       ./build.sh pkg         to build capd-*.deb and capd-*.rpm"
         echo
-        echo "       ./build.sh deb upload  to upload DEB as Github Release artifact"
-        echo "       ./build.sh rpm upload  to upload RPM as Github Release artifact"
+        echo "       ./build.sh pkg upload  to upload *.deb,*.rpm as Github Release artifacts"
         exit 0
     fi
 
     cd "$TOPDIR"
+    meson "${build_src}"
+    meson dist -C "${build_src}" --include-subprojects
+
+    CAPD_DEB=capd_${VERSION}-1_amd64.deb
+    CAPD_PKG="${CAPD_DEB}"
+    DOCKER_IMG=capd_deb_img
+    DOCKER_DIR="$TOPDIR"/.docker/deb
+    CAPD_PKG_PATH="/workdir/${CAPD_DEB}"
     build_pkg
-    test_pkg "$1"
+    docker run --rm -v "$PWD":/host ubuntu:18.04 \
+           /bin/sh -c "apt update; apt install -y /host/${CAPD_DEB}; dpkg -L capd"
+
+    CAPD_RPM=capd-${TAG}-1.x86_64.rpm
+    CAPD_PKG="${CAPD_RPM}"
+    DOCKER_IMG=capd_rpm_img
+    DOCKER_DIR="$TOPDIR"/.docker/rpm
+    CAPD_PKG_PATH="/root/rpmbuild/RPMS/x86_64/${CAPD_RPM}"
+    build_pkg
+    docker run --rm -v "$PWD":/host amazonlinux:2022 \
+           /bin/sh -c "rpm -i /host/${CAPD_RPM}; rpm -ql capd"
 
     if [ "${2:-}" == "upload" ]; then
-        github_upload "${CAPD_PKG}"
+        gh release create "${TAG}" \
+           -n "${GH_NOTES}" -t "${GH_TITLE}" \
+           "${CAPD_RPM}" "${CAPD_DEB}"
+
     else
         echo
         echo "Build successful. Run again with 'upload' to upload assets to Github."
@@ -62,9 +69,6 @@ function main() {
 
 
 function build_pkg() {
-    meson "${build_src}"
-    meson dist -C "${build_src}" --include-subprojects
-
     docker build \
            -t ${DOCKER_IMG} \
            --build-arg SRC_TAR="${SRC_TAR}" \
@@ -73,26 +77,11 @@ function build_pkg() {
 
     docker run --rm -v "$PWD":/host ${DOCKER_IMG} \
            /bin/sh -c "cp ${CAPD_PKG_PATH} /host"
-}
-
-
-function test_pkg {
-    if [ "$1" == "deb" ]; then
-        docker run --rm -v "$PWD":/host ubuntu:18.04 \
-               /bin/sh -c "apt update; apt install -y /host/${CAPD_DEB}; dpkg -L capd"
-
-    elif [ "$1" == "rpm" ]; then
-        docker run --rm -v "$PWD":/host amazonlinux:2022 \
-               /bin/sh -c "rpm -i /host/${CAPD_RPM}; rpm -ql capd"
-    fi
-}
-
-
-function github_upload {
-    gh release create "${TAG}" \
-       --draft \
-       -n "${GH_NOTES}" -t "${GH_TITLE}" \
-       "$1"
+    # workaround root:root permissions of CAPD_PKG
+    rm -f tmp.pkg
+    cp "${CAPD_PKG}" tmp.pkg
+    rm -f "${CAPD_PKG}"
+    mv tmp.pkg "${CAPD_PKG}"
 }
 
 
