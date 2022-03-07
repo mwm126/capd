@@ -28,7 +28,7 @@ WORKDIR /workdir
 ARG SRC_TAR
 COPY ${SRC_TAR} .
 
-RUN tar xf ${SRC_TAR}
+RUN tar xf $(basename ${SRC_TAR})
 WORKDIR /workdir/capd-v22.2.17
 RUN dpkg-buildpackage -us -uc -b
 
