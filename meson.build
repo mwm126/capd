@@ -1,7 +1,7 @@
 project(
   'capd', 'c', 'cpp',
   version : files('VERSION'),
-  default_options : ['werror=true', 'c_std=c2x', 'warning_level=3'])
+  default_options : ['werror=true', 'c_std=c2x', 'cpp_std=c++17', 'warning_level=3'])
 
 cc = meson.get_compiler('c')
 cryptolib = cc.find_library('crypto')
