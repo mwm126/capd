@@ -17,7 +17,7 @@ executable(
   install : true
 )
 
-capd_toml = '/home/mark/repos/capd/etc/capd.toml'
+capd_toml = meson.current_source_dir() + '/etc/capd.toml'
 subdir('test')
 
 install_data('etc/capd.counter', install_dir: '/etc/capd')
