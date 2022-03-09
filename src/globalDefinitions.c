@@ -1,26 +1,45 @@
 #include "globalDefinitions.h"
+#include "parse_config.h"
 #include "utilityFunctions.h"
 
 #define STRINGIZE(x) #x
 #define QUOTE(x) STRINGIZE(x)
 
 /* Global Control Variables */
-char _capdVersion[40] = QUOTE(CAPD_VERSION);
-char _passwdFile[MAX_PATH] = "/etc/capd/capd.passwd";
-char _counterFile[MAX_PATH] = "/etc/capd/capd.counter";
-char _logFile[MAX_PATH] = "/var/log/capd.log";
-char _jailPath[MAX_PATH] = "/var/capd/";
-char _openSSHPath[MAX_PATH] = "/usr/sbin/openClose.sh";
-char _serverAddress[MAX_NO_OF_SERVER_ADDR][32] = {{0x00}};
-int _noOfServerAddresses = 0;
-u32 _deltaT = 30;       /* Maximum allowed clock skew from client to server */
-u32 _initTimeout = 5;   /* Maximum time allowed to open local ssh connection */
-u32 _spoofTimeout = 30; /* Maximum time allowed to open spoofed ssh connection */
-char _user[32] = "capd";
+char _capdVersion[40];
+char _passwdFile[MAX_PATH];
+char _counterFile[MAX_PATH];
+char _logFile[MAX_PATH];
+char _jailPath[MAX_PATH];
+char _openSSHPath[MAX_PATH];
+char _serverAddress[MAX_NO_OF_SERVER_ADDR][32];
+int _noOfServerAddresses;
+u32 _deltaT;       /* Maximum allowed clock skew from client to server */
+u32 _initTimeout;  /* Maximum time allowed to open local ssh connection */
+u32 _spoofTimeout; /* Maximum time allowed to open spoofed ssh connection */
+char _user[32];
 uid_t _uid, _gid;
-int _port = 62201;
-bool _ignore_pkt_ip = false;
-int _verbosity = 1;
+int _port;
+bool _ignore_pkt_ip;
+int _verbosity;
+
+void init_globals()
+{
+    strcpy(_capdVersion, QUOTE(CAPD_VERSION));
+    strcpy(_passwdFile, "/etc/capd/capd.passwd");
+    strcpy(_counterFile, "/etc/capd/capd.counter");
+    strcpy(_logFile, "/var/log/capd.log");
+    strcpy(_jailPath, "/var/capd/");
+    strcpy(_openSSHPath, "/usr/sbin/openClose.sh");
+    _noOfServerAddresses = 0;
+    _deltaT = 30;       /* Maximum allowed clock skew from client to server */
+    _initTimeout = 5;   /* Maximum time allowed to open local ssh connection */
+    _spoofTimeout = 30; /* Maximum time allowed to open spoofed ssh connection */
+    strcpy(_user, "capd");
+    _port = 62201;
+    _ignore_pkt_ip = false;
+    _verbosity = 1;
+}
 
 char *capdVersion()
 {
@@ -107,6 +126,10 @@ int verbosity()
 
 void init_usage(int argc, char *argv[])
 {
+    init_globals();
+    char cfg_fname[1000];
+    strcpy(cfg_fname, "/etc/capd/capd.toml");
+
     int i;
     for (i = 1; i < argc; i++)
     {
@@ -114,6 +137,7 @@ void init_usage(int argc, char *argv[])
         {
             printf("capd - Cloaked Access Protocol Daemon - %s\n\n", _capdVersion);
             printf("  Usage:\n");
+            printf("  -g,  --config-file [capd config file; default /etc/capd/capd.toml]\n");
             printf("  -pw, --password-file [capd password file]\n");
             printf("  -c,  --counter-file [capd counter file]\n");
             printf("  -l,  --log-file [capd log file]\n");
@@ -129,6 +153,8 @@ void init_usage(int argc, char *argv[])
             printf("  -v,  --verbosity [verbosity level]\n\n");
             exit(0);
         }
+        if ((strcmp(argv[i], "-g") == 0) || (strcmp(argv[i], "--config-file") == 0))
+            strcpy(cfg_fname, argv[++i]);
         if ((strcmp(argv[i], "-pw") == 0) || (strcmp(argv[i], "--password-file") == 0))
             strcpy(_passwdFile, argv[++i]);
         if ((strcmp(argv[i], "-c") == 0) || (strcmp(argv[i], "--counter-file") == 0))
@@ -159,6 +185,12 @@ void init_usage(int argc, char *argv[])
         if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "--verbosity") == 0))
             _verbosity = atoi(argv[++i]);
         _verbosity = BOUND(_verbosity, 0, 2);
+    }
+
+    config_t cfg = init_config(cfg_fname);
+    if (strcmp(cfg.address, ""))
+    {
+        strcpy(_serverAddress[_noOfServerAddresses++], cfg.address);
     }
 }
 
