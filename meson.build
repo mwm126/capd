@@ -17,4 +17,6 @@ executable(
   install : true
 )
 
+install_data('capd.counter', install_dir: '/etc/capd')
+install_data('capd.passwd', install_dir: '/etc/capd')
 install_data('openClose.sh', install_dir: 'bin')
