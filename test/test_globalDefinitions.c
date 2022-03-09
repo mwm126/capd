@@ -22,7 +22,7 @@ void test_init_usage_defaults(void)
     TEST_ASSERT_EQUAL_STRING("/etc/capd/capd.passwd", passwdFile());
     TEST_ASSERT_EQUAL_STRING("/etc/capd/capd.counter", counterFile());
     TEST_ASSERT_EQUAL_STRING("/var/log/capd.log", logFile());
-    TEST_ASSERT_EQUAL_STRING("/tmp/capd/", jailPath());
+    TEST_ASSERT_EQUAL_STRING("/var/capd/", jailPath());
     TEST_ASSERT_EQUAL_INT(30, deltaT());
     TEST_ASSERT_EQUAL_INT(5, initTimeout());
     TEST_ASSERT_EQUAL_INT(30, spoofTimeout());
@@ -46,7 +46,7 @@ void test_init_usage_cmdline(void)
     TEST_ASSERT_EQUAL_STRING("capd.counter", counterFile());
     TEST_ASSERT_EQUAL_STRING("capd.log", logFile());
     TEST_ASSERT_EQUAL_STRING("capd.pwd", passwdFile());
-    TEST_ASSERT_EQUAL_STRING("/tmp/capd/", jailPath());
+    TEST_ASSERT_EQUAL_STRING("/var/capd/", jailPath());
     TEST_ASSERT_EQUAL_INT(123, deltaT());
     TEST_ASSERT_EQUAL_INT(456, initTimeout());
     TEST_ASSERT_EQUAL_INT(777, spoofTimeout());
