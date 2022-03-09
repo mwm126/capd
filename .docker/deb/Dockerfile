@@ -12,6 +12,7 @@ RUN apt-get -qq update \
     devscripts=2.* \
     dh-make=2.* \
     dh-systemd=11.*  \
+    dh-sysuser=1.*  \
     equivs=2.* \
     fakeroot=1.* \
     libssl-dev=1.* \
