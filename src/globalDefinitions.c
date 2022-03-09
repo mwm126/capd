@@ -175,7 +175,6 @@ void setup_security(uid_t uid, gid_t gid)
     }
     _uid = pw->pw_uid;
     _gid = pw->pw_gid;
-    ABORT_IF_ERR(mkdir(_jailPath, rwX), "Could not mkdir jail path");
     ABORT_IF_ERR(chown(_jailPath, uid, gid), "Could not chown jail path");
     ABORT_IF_ERR(chmod(_jailPath, rwX), "Could not chmod jail path");
     ABORT_IF_ERR(chown(_passwdFile, uid, gid), "Could not chown passwd");
