@@ -8,6 +8,6 @@ Homepage: https://github.com/mwm126/capd
 
 Package: capd
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, systemd, adduser (>= 3.11)
 Description: CAP service
  Runs the capd service.

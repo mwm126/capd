@@ -168,7 +168,9 @@ void setup_security(uid_t uid, gid_t gid)
     struct passwd *pw = getpwnam(_user);
     if (pw == NULL)
     {
-        fatal("SERVER HALT - User not found");
+        char msg[1000];
+        sprintf(msg, "SERVER HALT - User not found: %s", _user);
+        fatal(msg);
         return;
     }
     _uid = pw->pw_uid;
