@@ -2,7 +2,7 @@ Source: capd
 Section: unknown
 Priority: optional
 Maintainer: Mark Meredith <mark.meredith@netl.doe.gov>
-Build-Depends: debhelper (>= 10), dh-systemd (>= 1.5)
+Build-Depends: debhelper (>= 10), dh-systemd (>= 1.5), dh-sysuser (>= 1.3)
 Standards-Version: 4.1.2
 Homepage: https://github.com/mwm126/capd
 
