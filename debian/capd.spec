@@ -14,7 +14,7 @@ Runs the capd service.
 %setup -q
 
 %build
-meson build -Dc_std=c11 --prefix=/usr
+meson build -Dc_std=c11 -Dcpp_std=c++17 --prefix=/usr
 meson compile -C build
 
 %install
