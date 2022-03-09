@@ -17,6 +17,7 @@ void test_build_command_line(void)
     char destAddr[32] = "44.33.22.11";
     int destPort = 54321;
     int timeLimit = 12345;
+    init_globals();
 
     build_command_line(commandLine, allowedAddr, hostAddr, timeLimit, destAddr, destPort);
 

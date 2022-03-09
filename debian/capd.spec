@@ -14,7 +14,7 @@ Runs the capd service.
 %setup -q
 
 %build
-meson build -Dc_std=c11 --prefix=/usr
+meson build -Dc_std=c11 -Dcpp_std=c++17 --prefix=/usr
 meson compile -C build
 
 %install
@@ -28,6 +28,9 @@ rm -rf build %{buildroot}
 
 %files
 %{_unitdir}/capd.service
+/etc/capd/capd.counter
+/etc/capd/capd.passwd
+/etc/capd/capd.toml
 /usr/bin/capd
 /usr/bin/openClose.sh
 

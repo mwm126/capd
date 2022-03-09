@@ -99,7 +99,13 @@ typedef struct
     int loginAddrIndex;
 } authmessage_t;
 
+typedef struct
+{
+    char address[addrSize];
+} config_t;
+
 void init_usage(int argc, char *argv[]);
+void init_globals();
 void setup_security();
 
 char *capdVersion(void);
