@@ -8,7 +8,7 @@ char *CAPD_TEST_TOML;
 
 void setUp(void)
 {
-    CAPD_TEST_USER = getenv("USER");
+    CAPD_TEST_USER = "CAPD_USER";
     CAPD_TEST_TOML = getenv("CAPD_TOML");
 }
 void tearDown(void)
