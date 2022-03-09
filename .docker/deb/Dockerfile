@@ -15,6 +15,7 @@ RUN apt-get -qq update \
     dh-sysuser=1.*  \
     equivs=2.* \
     fakeroot=1.* \
+    g++=4:7.* \
     libssl-dev=1.* \
     pkg-config=0.29.* \
     python3-pip=9.* \

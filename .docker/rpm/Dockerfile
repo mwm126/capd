@@ -5,6 +5,7 @@ LABEL maintainer="Mark Meredith <mark.meredith@netl.doe.gov>"
 RUN yum -y update \
     && yum install -y \
     gcc \
+    gcc-c++ \
     meson \
     openssl-devel \
     rpm-build \

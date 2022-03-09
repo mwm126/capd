@@ -28,6 +28,9 @@ rm -rf build %{buildroot}
 
 %files
 %{_unitdir}/capd.service
+/etc/capd/capd.counter
+/etc/capd/capd.passwd
+/etc/capd/capd.toml
 /usr/bin/capd
 /usr/bin/openClose.sh
 
