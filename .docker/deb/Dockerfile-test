@@ -1,0 +1,27 @@
+FROM ubuntu:18.04
+
+LABEL maintainer="Mark Meredith <mark.meredith@netl.doe.gov>"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get -qq update \
+    && apt-get -qq -y install --no-install-recommends \
+    cdbs=0.* \
+    equivs=2.* \
+    fakeroot=1.* \
+    systemd \
+    sysuser-helper \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /
+
+ARG CAPD_DEB
+
+COPY ${CAPD_DEB} .
+RUN pwd
+RUN ls
+
+RUN dpkg -i "${CAPD_DEB}"
+RUN dpkg -L capd
+
+CMD [ "/bin/bash" ]

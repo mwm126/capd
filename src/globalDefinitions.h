@@ -106,7 +106,7 @@ typedef struct
 
 void init_usage(int argc, char *argv[]);
 void init_globals();
-void setup_security();
+void setup_security(uid_t uid, gid_t gid);
 
 char *capdVersion(void);
 char *passwdFile(void);
